@@ -5,7 +5,7 @@ interface Activity {
 }
 
 interface Package {
-  deliveryDate: Date;
+  deliveryDate?: Date;
   delivered: boolean;
   activity: Activity[];
 }
