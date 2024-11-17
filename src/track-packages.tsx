@@ -1,11 +1,11 @@
-import { Action, ActionPanel, Color, Detail, Icon, List } from "@raycast/api";
+import { Action, ActionPanel, Detail, Icon, List } from "@raycast/api";
 import tempData from "./tempData";
 import providers from "./providers";
 
 export default function Command() {
   return (
     <List>
-      {tempData.map((item, index) => (
+      {tempData.map(item => (
         <List.Item
           key={item.id}
           id={item.id.toString()}
@@ -13,12 +13,12 @@ export default function Command() {
           title={item.name}
           subtitle={item.trackingNumber}
           accessories={[
-            { text: calculateDayDifference(item.deliveryDate).toString() + " days until delivery" },
-            { text: { value: item.type, color: providers.get(item.type)?.color } },
+            { text: calculateDayDifference(item.packages[0].deliveryDate).toString() + " days until delivery" },
+            { text: { value: item.carrier, color: providers.get(item.carrier)?.color } },
           ]}
           actions={
             <ActionPanel>
-              <Action.Push title="Show Details" target={<Detail markdown={`# ${item.details}`} />} />
+              <Action.Push title="Show Details" target={<Detail markdown={`# ${item.name}`} />} />
             </ActionPanel>
           }
         />

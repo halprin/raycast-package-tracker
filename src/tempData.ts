@@ -1,32 +1,44 @@
-interface Track {
-  id: number;
-  name: string;
-  trackingNumber: string;
-  type: string;
-  deliveryDate: Date;
-}
+import { Track } from './track';
 
 const tracks: Track[] = [
   {
     id: 0,
     name: "MacBook Pro",
     trackingNumber: "1Zasdf",
-    type: "UPS",
-    deliveryDate: new Date("2024-11-21"),
+    carrier: "UPS",
+    packages: [
+      {
+        deliveryDate: new Date("2024-11-21"),
+        delivered: false,
+        activity: []
+      },
+    ],
   },
   {
     id: 1,
     name: "DisplayPort cable",
     trackingNumber: "92462346326",
-    type: "FedEx",
-    deliveryDate: new Date("2024-11-09"),
+    carrier: "FedEx",
+    packages: [
+      {
+        deliveryDate: new Date("2024-11-09"),
+        delivered: true,
+        activity: []
+      },
+    ],
   },
   {
     id: 2,
     name: "CalDigit TS4",
     trackingNumber: "156845865089045685454467",
-    type: "USPS",
-    deliveryDate: new Date(),
+    carrier: "USPS",
+    packages: [
+      {
+        deliveryDate: new Date(),
+        delivered: false,
+        activity: []
+      },
+    ],
   },
 ];
 
