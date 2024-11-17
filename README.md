@@ -1,2 +1,3 @@
-# raycast-package-tracker
-Tracks packages and parcels.
+# Package Tracker
+
+Tracks packages and parcels
