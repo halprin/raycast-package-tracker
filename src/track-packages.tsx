@@ -4,8 +4,9 @@ import tempData from "./tempData";
 import providers from "./providers";
 import Package from "./package";
 import { Track } from "./track";
+import AddCommand from "./add-package-to-track";
 
-export default function Command() {
+export default function TrackCommand() {
   const [tracking, setTracking] = useState<Track[]>([]);
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function Command() {
           actions={
             <ActionPanel>
               <Action.Push title="Show Details" target={<Detail markdown={`# ${item.name}`} />} />
+              <Action.Push title="Track New Delivery" target={ <AddCommand /> } />
             </ActionPanel>
           }
         />
