@@ -70,7 +70,7 @@ function sortTracking(tracks: Track[]): Track[] {
       return 0;
     }
 
-    const dayDifferenceDifference = calculateDayDifference(aEarliestDeliveryDate) - calculateDayDifference(bEarliestDeliveryDate);
+    const dayDifferenceDifference = calculateDayDifference(aEarliestDeliveryDate!) - calculateDayDifference(bEarliestDeliveryDate!);
     if (dayDifferenceDifference == 0) {
       // both tracks tie for earliest delivery
 
