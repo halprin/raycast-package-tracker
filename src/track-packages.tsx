@@ -7,10 +7,10 @@ import {
   Icon,
   List,
   environment,
-  Alert,
   Keyboard,
   showToast,
-  Toast
+  Toast,
+  confirmAlert, Alert
 } from "@raycast/api";
 import tempData from "./tempData";
 import providers from "./providers";
@@ -67,6 +67,21 @@ async function fetchTracking(setTracking: React.Dispatch<React.SetStateAction<Tr
 
 async function deleteTracking(id: string, tracking: Track[], setTracking: React.Dispatch<React.SetStateAction<Track[]>>) {
   const nameOfTrackToDelete = tracking.find(track => track.id === id)?.name ?? "Unknown";
+
+  const options: Alert.Options = {
+    title: "Delete Delivery",
+    message: `Are you sure you want to delete ${nameOfTrackToDelete}?`,
+    icon: Icon.Trash,
+    primaryAction: {
+      title: "Delete",
+      style: Alert.ActionStyle.Destructive,
+    },
+  };
+
+  const confirmation = await confirmAlert(options)
+  if (!confirmation) {
+    return;
+  }
 
   await removeTracking(id);
   await fetchTracking(setTracking);
