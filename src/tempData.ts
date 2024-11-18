@@ -60,18 +60,41 @@ const tracks: Track[] = [
     carrier: "UPS",
     packages: [
       {
-        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4),  // 4 days ahead,
+        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4),  // 4 days ahead
         delivered: false,
         activity: []
       },
       {
-        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4),  // 2 days ahead,
+        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4),  // 2 days ahead
         delivered: false,
         activity: []
       },
       {
-        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4),  // 1 days ahead,
+        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4),  // 1 days ahead
         delivered: true,
+        activity: []
+      },
+    ],
+  },
+  {
+    id: 6,
+    name: "partially delivered, with unknown delivery dates",
+    trackingNumber: "134578458906534",
+    carrier: "FedEx",
+    packages: [
+      {
+        deliveryDate: undefined,
+        delivered: false,
+        activity: []
+      },
+      {
+        deliveryDate: undefined,
+        delivered: true,
+        activity: []
+      },
+      {
+        deliveryDate: undefined,
+        delivered: false,
         activity: []
       },
     ],
