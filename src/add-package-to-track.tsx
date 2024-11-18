@@ -1,4 +1,4 @@
-import { Form, ActionPanel, Action, showToast, Toast } from "@raycast/api";
+import { Form, ActionPanel, Action, showToast, Toast, useNavigation } from "@raycast/api";
 import providers from "./providers";
 import { FormValidation, useForm } from "@raycast/utils";
 import { addTracking } from "./storage";
@@ -12,6 +12,8 @@ interface AddTrackingForm {
 }
 
 export default function AddCommand() {
+
+  const { pop } = useNavigation();
 
   const { handleSubmit, itemProps } = useForm<AddTrackingForm>({
     onSubmit: async (trackingForm) => {
@@ -30,6 +32,8 @@ export default function AddCommand() {
         title: "New Delivery Added",
         message: trackingForm.name,
       });
+
+      pop();
 
     },
     validation: {

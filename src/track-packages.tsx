@@ -30,7 +30,7 @@ export default function TrackCommand() {
           actions={
             <ActionPanel>
               <Action.Push title="Show Details" target={<Detail markdown={`# ${item.name}`} />} />
-              <Action.Push title="Track New Delivery" target={ <AddCommand /> } />
+              <Action.Push title="Track New Delivery" target={ <AddCommand /> } onPop={ () => fetchTracking(setTracking) } />
             </ActionPanel>
           }
         />
@@ -61,6 +61,9 @@ function sortTracking(tracks: Track[]): Track[] {
     } else if (aTrack.packages.length == 0 && bTrack.packages.length > 0) {
       // a doesn't have any packages, and b does
       return 1;
+    } else if (aTrack.packages.length == 0 && bTrack.packages.length == 0) {
+      //a doesn't have any packages, and b doesn't either
+      return 0;
     }
 
     const aAllPackagesDelivered = aTrack.packages.every(aPackage => aPackage.delivered)
