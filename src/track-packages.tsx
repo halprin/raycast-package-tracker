@@ -14,7 +14,7 @@ export default function Command() {
 
   return (
     <List>
-      {sortTracking(tempData).map(item => (
+      {tracking.map(item => (
         <List.Item
           key={ item.id }
           id={ item.id.toString() }
