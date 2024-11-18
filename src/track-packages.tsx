@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Action, ActionPanel, Color, Detail, Icon, List } from "@raycast/api";
+import { Action, ActionPanel, Color, Detail, Icon, List, environment } from "@raycast/api";
 import tempData from "./tempData";
 import providers from "./providers";
 import Package from "./package";
@@ -37,7 +37,15 @@ export default function Command() {
 }
 
 async function fetchTracking(setTracking: React.Dispatch<React.SetStateAction<Track[]>>) {
-  const sortedTracking = sortTracking(tempData);
+
+  let tracking: Track[] = [];
+
+  if (environment.isDevelopment) {
+    // running the development version
+    tracking = tracking.concat(tempData);
+  }
+
+  const sortedTracking = sortTracking(tracking);
   setTracking(sortedTracking)
 }
 
