@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { Action, ActionPanel, Color, Detail, Icon, List } from "@raycast/api";
 import tempData from "./tempData";
 import providers from "./providers";
@@ -5,6 +6,12 @@ import Package from "./package";
 import { Track } from "./track";
 
 export default function Command() {
+  const [tracking, setTracking] = useState<Track[]>([]);
+
+  useEffect(() => {
+    fetchTracking(setTracking);
+  }, []);
+
   return (
     <List>
       {sortTracking(tempData).map(item => (
@@ -27,6 +34,11 @@ export default function Command() {
       ))}
     </List>
   );
+}
+
+async function fetchTracking(setTracking: React.Dispatch<React.SetStateAction<Track[]>>) {
+  const sortedTracking = sortTracking(tempData);
+  setTracking(sortedTracking)
 }
 
 function sortTracking(tracks: Track[]): Track[] {
