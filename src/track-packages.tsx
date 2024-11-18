@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Action, ActionPanel, Color, Detail, Icon, List, environment } from "@raycast/api";
+import {
+  Action,
+  ActionPanel,
+  Color,
+  Detail,
+  Icon,
+  List,
+  environment,
+  Alert,
+  Keyboard,
+  showToast,
+  Toast
+} from "@raycast/api";
 import tempData from "./tempData";
 import providers from "./providers";
 import Package from "./package";
 import { Track } from "./track";
 import AddCommand from "./add-package-to-track";
-import { getTracking } from "./storage";
+import { getTracking, removeTracking } from "./storage";
 
 export default function TrackCommand() {
   const [tracking, setTracking] = useState<Track[]>([]);
@@ -29,8 +41,9 @@ export default function TrackCommand() {
           ] }
           actions={
             <ActionPanel>
-              <Action.Push title="Show Details" target={<Detail markdown={`# ${item.name}`} />} />
-              <Action.Push title="Track New Delivery" target={ <AddCommand /> } onPop={ () => fetchTracking(setTracking) } />
+              <Action.Push title="Show Details" icon={ Icon.MagnifyingGlass } target={<Detail markdown={`# ${item.name}`} />} />
+              <Action title="Delete Delivery" icon={ Icon.Trash } shortcut={ Keyboard.Shortcut.Common.Remove } style={ Action.Style.Destructive } onAction={ () => deleteTracking(item.id, tracking, setTracking) } />
+              <Action.Push title="Track New Delivery" icon={ Icon.Plus } shortcut={ Keyboard.Shortcut.Common.New } target={ <AddCommand /> } onPop={ () => fetchTracking(setTracking) } />
             </ActionPanel>
           }
         />
@@ -50,6 +63,19 @@ async function fetchTracking(setTracking: React.Dispatch<React.SetStateAction<Tr
 
   const sortedTracking = sortTracking(tracking);
   setTracking(sortedTracking)
+}
+
+async function deleteTracking(id: string, tracking: Track[], setTracking: React.Dispatch<React.SetStateAction<Track[]>>) {
+  const nameOfTrackToDelete = tracking.find(track => track.id === id)?.name ?? "Unknown";
+
+  await removeTracking(id);
+  await fetchTracking(setTracking);
+
+  await showToast({
+    style: Toast.Style.Success,
+    title: "Deleted Delivery",
+    message: nameOfTrackToDelete,
+  });
 }
 
 function sortTracking(tracks: Track[]): Track[] {

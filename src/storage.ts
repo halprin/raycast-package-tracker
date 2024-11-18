@@ -12,15 +12,17 @@ export async function getTracking(): Promise<Track[]> {
 }
 
 export async function addTracking(track: Track) {
-  const trackingString = await LocalStorage.getItem<string>("tracking");
-
-  let tracking: Track[] = [];
-
-  if (trackingString) {
-    tracking = JSON.parse(trackingString);
-  }
+  const tracking = await getTracking();
 
   tracking.push(track);
 
   await LocalStorage.setItem("tracking", JSON.stringify(tracking));
+}
+
+export async function removeTracking(id: string) {
+  const tracking = await getTracking();
+
+  const reducedTracking = tracking.filter((track) => track.id !== id);
+
+  await LocalStorage.setItem("tracking", JSON.stringify(reducedTracking));
 }

@@ -27,7 +27,7 @@ export default function AddCommand() {
       }
       await addTracking(track)
 
-      showToast({
+      await showToast({
         style: Toast.Style.Success,
         title: "New Delivery Added",
         message: trackingForm.name,
