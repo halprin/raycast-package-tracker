@@ -1,7 +1,7 @@
 import Package from "./package";
 
 export interface Track {
-  id: number;
+  id: string;
   name: string;
   trackingNumber: string;
   carrier: string;

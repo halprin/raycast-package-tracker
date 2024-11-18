@@ -1,6 +1,9 @@
 import { Form, ActionPanel, Action, showToast, Toast } from "@raycast/api";
 import providers from "./providers";
 import { FormValidation, useForm } from "@raycast/utils";
+import { addTracking } from "./storage";
+import { Track } from "./track";
+import { randomUUID } from "node:crypto";
 
 interface AddTrackingForm {
   name: string,
@@ -11,7 +14,16 @@ interface AddTrackingForm {
 export default function AddCommand() {
 
   const { handleSubmit, itemProps } = useForm<AddTrackingForm>({
-    onSubmit(trackingForm) {
+    onSubmit: async (trackingForm) => {
+
+      const track: Track = {
+        id: randomUUID().toString(),
+        name: trackingForm.name,
+        trackingNumber: trackingForm.trackingNumber,
+        carrier: trackingForm.carrier,
+        packages: []
+      }
+      await addTracking(track)
 
       showToast({
         style: Toast.Style.Success,

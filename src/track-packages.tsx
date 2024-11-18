@@ -5,6 +5,7 @@ import providers from "./providers";
 import Package from "./package";
 import { Track } from "./track";
 import AddCommand from "./add-package-to-track";
+import { getTracking } from "./storage";
 
 export default function TrackCommand() {
   const [tracking, setTracking] = useState<Track[]>([]);
@@ -40,7 +41,7 @@ export default function TrackCommand() {
 
 async function fetchTracking(setTracking: React.Dispatch<React.SetStateAction<Track[]>>) {
 
-  let tracking: Track[] = [];
+  let tracking: Track[] = await getTracking();
 
   if (environment.isDevelopment) {
     // running the development version
@@ -53,6 +54,14 @@ async function fetchTracking(setTracking: React.Dispatch<React.SetStateAction<Tr
 
 function sortTracking(tracks: Track[]): Track[] {
   return tracks.toSorted((aTrack, bTrack) => {
+
+    if (aTrack.packages.length > 0 && bTrack.packages.length == 0) {
+      // a has packages, and b doesn't
+      return -1
+    } else if (aTrack.packages.length == 0 && bTrack.packages.length > 0) {
+      // a doesn't have any packages, and b does
+      return 1;
+    }
 
     const aAllPackagesDelivered = aTrack.packages.every(aPackage => aPackage.delivered)
     const bAllPackagesDelivered = bTrack.packages.every(bPackage => bPackage.delivered)
@@ -117,6 +126,11 @@ function sortTracking(tracks: Track[]): Track[] {
 
 function deliveryIcon(packages: Package[]): Icon {
 
+  if (packages.length == 0) {
+    // there are no packages for this tracking, possible before data has been gotten from API
+    return Icon.QuestionMarkCircle
+  }
+
   const somePackagesDelivered = packages.some(aPackage => aPackage.delivered)
   let allPackagesDelivered = false;
   if (somePackagesDelivered) {
@@ -134,6 +148,13 @@ function deliveryIcon(packages: Package[]): Icon {
 
 function deliveryAccessory(packages: Package[]): { value: string, color?: Color } {
   // check whether all, some, or no packages in a track are delivered
+
+  if (packages.length == 0) {
+    return {
+      value: "No packages",
+      color: Color.Orange,
+    };
+  }
 
   const somePackagesDelivered = packages.some(aPackage => aPackage.delivered)
   let allPackagesDelivered = false;
@@ -168,7 +189,7 @@ function deliveryAccessory(packages: Package[]): { value: string, color?: Color 
   };
 }
 
-function getPackageWithEarliestDeliveryDate(packages: Package[]) {
+function getPackageWithEarliestDeliveryDate(packages: Package[]): Package {
   const now = new Date();
 
   return packages.reduce((closest, current) => {
