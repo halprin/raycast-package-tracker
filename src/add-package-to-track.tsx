@@ -13,7 +13,7 @@ interface AddTrackingForm {
 export default function AddCommand({
   props: { tracking, setTracking, isLoading },
 }: {
-  props: { tracking: Track[]; setTracking: (value: Track[]) => Promise<void>; isLoading: boolean };
+  props: { tracking?: Track[]; setTracking: (value: Track[]) => Promise<void>; isLoading: boolean };
 }) {
   const { pop } = useNavigation();
 
