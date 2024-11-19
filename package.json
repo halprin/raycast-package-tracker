@@ -25,6 +25,22 @@
       "mode": "view"
     }
   ],
+  "preferences": [
+    {
+      "name": "USPSConsumerKey",
+      "title": "USPS Consumer Key",
+      "description": "The consumer key from your app in the USPS developer portal",
+      "type": "password",
+      "required": false
+    },
+    {
+      "name": "USPSConsumerSecret",
+      "title": "USPS Consumer Secret",
+      "description": "The consumer secret from your app in the USPS developer portal",
+      "type": "password",
+      "required": false
+    }
+  ],
   "dependencies": {
     "@raycast/api": "^1.85.2",
     "@raycast/utils": "^1.17.0"
