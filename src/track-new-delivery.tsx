@@ -1,7 +1,7 @@
 import { environment } from "@raycast/api";
 import { useLocalStorage } from "@raycast/utils";
 import { Track } from "./track";
-import { debugTracks } from "./tempData";
+import { debugTracks } from "./debugData";
 import TrackNewDeliveryView from "./views/TrackNewDelivery";
 
 export default function TrackNewDeliveryCommand() {

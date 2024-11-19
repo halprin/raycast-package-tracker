@@ -12,7 +12,7 @@ import {
   confirmAlert,
   Alert,
 } from "@raycast/api";
-import { debugTracks, debugPackages } from "./tempData";
+import { debugTracks, debugPackages } from "./debugData";
 import providers from "./providers";
 import { Package } from "./package";
 import { Track } from "./track";
