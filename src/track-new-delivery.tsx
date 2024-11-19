@@ -10,7 +10,7 @@ interface AddTrackingForm {
   trackingNumber: string;
 }
 
-export default function AddCommand({
+export default function TrackNewDeliveryCommand({
   props: { tracking, setTracking, isLoading },
 }: {
   props: { tracking?: Track[]; setTracking: (value: Track[]) => Promise<void>; isLoading: boolean };
