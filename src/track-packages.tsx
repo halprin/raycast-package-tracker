@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   Action,
   ActionPanel,
@@ -18,18 +17,18 @@ import providers from "./providers";
 import Package from "./package";
 import { Track } from "./track";
 import AddCommand from "./add-package-to-track";
-import { getTracking, removeTracking } from "./storage";
+import { useLocalStorage } from "@raycast/utils";
 
 export default function TrackCommand() {
-  const [tracking, setTracking] = useState<Track[]>([]);
-
-  useEffect(() => {
-    fetchTracking(setTracking);
-  }, []);
+  const {
+    value: tracking,
+    setValue: setTracking,
+    isLoading,
+  } = useLocalStorage<Track[]>("tracking", environment.isDevelopment ? sortTracking(tempData) : []);
 
   return (
-    <List>
-      {tracking.map((item) => (
+    <List isLoading={isLoading}>
+      {tracking?.map((item) => (
         <List.Item
           key={item.id}
           id={item.id.toString()}
@@ -58,8 +57,7 @@ export default function TrackCommand() {
                 title="Track New Delivery"
                 icon={Icon.Plus}
                 shortcut={Keyboard.Shortcut.Common.New}
-                target={<AddCommand />}
-                onPop={() => fetchTracking(setTracking)}
+                target={<AddCommand props={{ tracking, setTracking, isLoading }} />}
               />
             </ActionPanel>
           }
@@ -69,23 +67,15 @@ export default function TrackCommand() {
   );
 }
 
-async function fetchTracking(setTracking: React.Dispatch<React.SetStateAction<Track[]>>) {
-  let tracking: Track[] = await getTracking();
-
-  if (environment.isDevelopment) {
-    // running the development version
-    tracking = tracking.concat(tempData);
-  }
-
-  const sortedTracking = sortTracking(tracking);
-  setTracking(sortedTracking);
-}
-
 async function deleteTracking(
   id: string,
-  tracking: Track[],
-  setTracking: React.Dispatch<React.SetStateAction<Track[]>>,
+  tracking: Track[] | undefined,
+  setTracking: (value: Track[]) => Promise<void>,
 ) {
+  if (!tracking) {
+    return;
+  }
+
   const nameOfTrackToDelete = tracking.find((track) => track.id === id)?.name ?? "Unknown";
 
   const options: Alert.Options = {
@@ -103,8 +93,8 @@ async function deleteTracking(
     return;
   }
 
-  await removeTracking(id);
-  await fetchTracking(setTracking);
+  const reducedTracking = tracking.filter((track) => track.id !== id);
+  await setTracking(reducedTracking);
 
   await showToast({
     style: Toast.Style.Success,

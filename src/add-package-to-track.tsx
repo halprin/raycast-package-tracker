@@ -1,7 +1,6 @@
 import { Form, ActionPanel, Action, showToast, Toast, useNavigation } from "@raycast/api";
 import providers from "./providers";
 import { FormValidation, useForm } from "@raycast/utils";
-import { addTracking } from "./storage";
 import { Track } from "./track";
 import { randomUUID } from "node:crypto";
 
@@ -11,7 +10,11 @@ interface AddTrackingForm {
   trackingNumber: string;
 }
 
-export default function AddCommand() {
+export default function AddCommand({
+  props: { tracking, setTracking, isLoading },
+}: {
+  props: { tracking: Track[]; setTracking: (value: Track[]) => Promise<void>; isLoading: boolean };
+}) {
   const { pop } = useNavigation();
 
   const { handleSubmit, itemProps } = useForm<AddTrackingForm>({
@@ -23,7 +26,7 @@ export default function AddCommand() {
         carrier: trackingForm.carrier,
         packages: [],
       };
-      await addTracking(track);
+      await setTracking((tracking || []).concat(track));
 
       await showToast({
         style: Toast.Style.Success,
@@ -42,6 +45,7 @@ export default function AddCommand() {
 
   return (
     <Form
+      isLoading={isLoading}
       actions={
         <ActionPanel>
           <Action.SubmitForm onSubmit={handleSubmit} />
