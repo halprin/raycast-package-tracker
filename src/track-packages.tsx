@@ -12,31 +12,36 @@ import {
   confirmAlert,
   Alert,
 } from "@raycast/api";
-import tempData from "./tempData";
+import { debugTracks, debugPackages } from "./tempData";
 import providers from "./providers";
-import Package from "./package";
+import { Package } from "./package";
 import { Track } from "./track";
 import AddCommand from "./add-package-to-track";
-import { useLocalStorage } from "@raycast/utils";
+import { useCachedState, useLocalStorage } from "@raycast/utils";
 
 export default function TrackCommand() {
   const {
     value: tracking,
     setValue: setTracking,
     isLoading,
-  } = useLocalStorage<Track[]>("tracking", environment.isDevelopment ? sortTracking(tempData) : []);
+  } = useLocalStorage<Track[]>("tracking", environment.isDevelopment ? debugTracks : []);
+
+  const [packages] = useCachedState<Map<string, Package[]>>(
+    "packages",
+    environment.isDevelopment ? debugPackages : new Map<string, Package[]>(),
+  );
 
   return (
     <List isLoading={isLoading}>
-      {tracking?.map((item) => (
+      {sortTracking(tracking ?? [], packages).map((item) => (
         <List.Item
           key={item.id}
           id={item.id.toString()}
-          icon={deliveryIcon(item.packages)}
+          icon={deliveryIcon(packages.get(item.id))}
           title={item.name}
           subtitle={item.trackingNumber}
           accessories={[
-            { text: deliveryAccessory(item.packages) },
+            { text: deliveryAccessory(packages.get(item.id)) },
             { text: { value: item.carrier, color: providers.get(item.carrier)?.color } },
           ]}
           actions={
@@ -103,21 +108,24 @@ async function deleteTracking(
   });
 }
 
-function sortTracking(tracks: Track[]): Track[] {
+function sortTracking(tracks: Track[], packages: Map<string, Package[]>): Track[] {
   return tracks.toSorted((aTrack, bTrack) => {
-    if (aTrack.packages.length > 0 && bTrack.packages.length == 0) {
+    const aPackages = packages.get(aTrack.id) ?? [];
+    const bPackages = packages.get(bTrack.id) ?? [];
+
+    if (aPackages.length > 0 && bPackages.length == 0) {
       // a has packages, and b doesn't
       return -1;
-    } else if (aTrack.packages.length == 0 && bTrack.packages.length > 0) {
+    } else if (aPackages.length == 0 && bPackages.length > 0) {
       // a doesn't have any packages, and b does
       return 1;
-    } else if (aTrack.packages.length == 0 && bTrack.packages.length == 0) {
+    } else if (aPackages.length == 0 && bPackages.length == 0) {
       //a doesn't have any packages, and b doesn't either
       return 0;
     }
 
-    const aAllPackagesDelivered = aTrack.packages.every((aPackage) => aPackage.delivered);
-    const bAllPackagesDelivered = bTrack.packages.every((bPackage) => bPackage.delivered);
+    const aAllPackagesDelivered = aPackages.every((aPackage) => aPackage.delivered);
+    const bAllPackagesDelivered = bPackages.every((bPackage) => bPackage.delivered);
 
     if (aAllPackagesDelivered && !bAllPackagesDelivered) {
       // a has all packages delivered, and b doesn't
@@ -127,8 +135,8 @@ function sortTracking(tracks: Track[]): Track[] {
       return 1;
     }
 
-    const aEarliestDeliveryDate = getPackageWithEarliestDeliveryDate(aTrack.packages).deliveryDate;
-    const bEarliestDeliveryDate = getPackageWithEarliestDeliveryDate(bTrack.packages).deliveryDate;
+    const aEarliestDeliveryDate = getPackageWithEarliestDeliveryDate(aPackages).deliveryDate;
+    const bEarliestDeliveryDate = getPackageWithEarliestDeliveryDate(bPackages).deliveryDate;
 
     if (aEarliestDeliveryDate && !bEarliestDeliveryDate) {
       // a has a delivery date, and b doesn't
@@ -139,8 +147,8 @@ function sortTracking(tracks: Track[]): Track[] {
     } else if (!aEarliestDeliveryDate && !bEarliestDeliveryDate) {
       // a doesn't have a delivery date, and b doesn't either
 
-      const aSomePackagesDelivered = aTrack.packages.some((aPackage) => aPackage.delivered);
-      const bSomePackagesDelivered = bTrack.packages.some((bPackage) => bPackage.delivered);
+      const aSomePackagesDelivered = aPackages.some((aPackage) => aPackage.delivered);
+      const bSomePackagesDelivered = bPackages.some((bPackage) => bPackage.delivered);
 
       if (aSomePackagesDelivered && !bSomePackagesDelivered) {
         // a has some packages delivered, and b doesn't
@@ -159,8 +167,8 @@ function sortTracking(tracks: Track[]): Track[] {
     if (dayDifferenceDifference == 0) {
       // both tracks tie for earliest delivery
 
-      const aSomePackagesDelivered = aTrack.packages.some((aPackage) => aPackage.delivered);
-      const bSomePackagesDelivered = bTrack.packages.some((bPackage) => bPackage.delivered);
+      const aSomePackagesDelivered = aPackages.some((aPackage) => aPackage.delivered);
+      const bSomePackagesDelivered = bPackages.some((bPackage) => bPackage.delivered);
 
       if (aSomePackagesDelivered && !bSomePackagesDelivered) {
         // a has some packages delivered, and b doesn't
@@ -178,8 +186,8 @@ function sortTracking(tracks: Track[]): Track[] {
   });
 }
 
-function deliveryIcon(packages: Package[]): Icon {
-  if (packages.length == 0) {
+function deliveryIcon(packages?: Package[]): Icon {
+  if (!packages || packages.length == 0) {
     // there are no packages for this tracking, possible before data has been gotten from API
     return Icon.QuestionMarkCircle;
   }
@@ -199,10 +207,10 @@ function deliveryIcon(packages: Package[]): Icon {
   return Icon.CircleProgress;
 }
 
-function deliveryAccessory(packages: Package[]): { value: string; color?: Color } {
+function deliveryAccessory(packages?: Package[]): { value: string; color?: Color } {
   // check whether all, some, or no packages in a track are delivered
 
-  if (packages.length == 0) {
+  if (!packages || packages.length == 0) {
     return {
       value: "No packages",
       color: Color.Orange,

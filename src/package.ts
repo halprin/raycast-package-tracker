@@ -4,10 +4,8 @@ interface Activity {
   location: string;
 }
 
-interface Package {
+export interface Package {
   deliveryDate?: Date;
   delivered: boolean;
   activity: Activity[];
 }
-
-export default Package;

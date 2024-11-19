@@ -24,7 +24,6 @@ export default function AddCommand({
         name: trackingForm.name,
         trackingNumber: trackingForm.trackingNumber,
         carrier: trackingForm.carrier,
-        packages: [],
       };
       await setTracking((tracking || []).concat(track));
 
