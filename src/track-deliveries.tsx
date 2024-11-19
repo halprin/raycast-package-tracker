@@ -16,8 +16,8 @@ import { debugTracks, debugPackages } from "./tempData";
 import providers from "./providers";
 import { Package } from "./package";
 import { Track } from "./track";
-import TrackNewDeliveryCommand from "./track-new-delivery";
 import { useCachedState, useLocalStorage } from "@raycast/utils";
+import TrackNewDeliveryView from "./views/TrackNewDelivery";
 
 export default function TrackDeliveriesCommand() {
   const {
@@ -62,7 +62,7 @@ export default function TrackDeliveriesCommand() {
                 title="Track New Delivery"
                 icon={Icon.Plus}
                 shortcut={Keyboard.Shortcut.Common.New}
-                target={<TrackNewDeliveryCommand props={{ tracking, setTracking, isLoading }} />}
+                target={<TrackNewDeliveryView props={{ tracking, setTracking, isLoading }} />}
               />
             </ActionPanel>
           }
