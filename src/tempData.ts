@@ -1,4 +1,4 @@
-import { Track } from './track';
+import { Track } from "./track";
 
 const tracks: Track[] = [
   {
@@ -8,9 +8,9 @@ const tracks: Track[] = [
     carrier: "UPS",
     packages: [
       {
-        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4),  // 4 days ahead
+        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 4 days ahead
         delivered: false,
-        activity: []
+        activity: [],
       },
     ],
   },
@@ -23,7 +23,7 @@ const tracks: Track[] = [
       {
         deliveryDate: new Date("2024-11-09"),
         delivered: true,
-        activity: []
+        activity: [],
       },
     ],
   },
@@ -36,7 +36,7 @@ const tracks: Track[] = [
       {
         deliveryDate: new Date(),
         delivered: false,
-        activity: []
+        activity: [],
       },
     ],
   },
@@ -49,7 +49,7 @@ const tracks: Track[] = [
       {
         deliveryDate: undefined,
         delivered: false,
-        activity: []
+        activity: [],
       },
     ],
   },
@@ -60,19 +60,19 @@ const tracks: Track[] = [
     carrier: "UPS",
     packages: [
       {
-        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4),  // 4 days ahead
+        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 4 days ahead
         delivered: false,
-        activity: []
+        activity: [],
       },
       {
-        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4),  // 2 days ahead
+        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 2 days ahead
         delivered: false,
-        activity: []
+        activity: [],
       },
       {
-        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4),  // 1 days ahead
+        deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 1 days ahead
         delivered: true,
-        activity: []
+        activity: [],
       },
     ],
   },
@@ -85,17 +85,17 @@ const tracks: Track[] = [
       {
         deliveryDate: undefined,
         delivered: false,
-        activity: []
+        activity: [],
       },
       {
         deliveryDate: undefined,
         delivered: true,
-        activity: []
+        activity: [],
       },
       {
         deliveryDate: undefined,
         delivered: false,
-        activity: []
+        activity: [],
       },
     ],
   },

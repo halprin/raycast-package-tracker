@@ -6,26 +6,24 @@ import { Track } from "./track";
 import { randomUUID } from "node:crypto";
 
 interface AddTrackingForm {
-  name: string,
-  carrier: string,
-  trackingNumber: string,
+  name: string;
+  carrier: string;
+  trackingNumber: string;
 }
 
 export default function AddCommand() {
-
   const { pop } = useNavigation();
 
   const { handleSubmit, itemProps } = useForm<AddTrackingForm>({
     onSubmit: async (trackingForm) => {
-
       const track: Track = {
         id: randomUUID().toString(),
         name: trackingForm.name,
         trackingNumber: trackingForm.trackingNumber,
         carrier: trackingForm.carrier,
-        packages: []
-      }
-      await addTracking(track)
+        packages: [],
+      };
+      await addTracking(track);
 
       await showToast({
         style: Toast.Style.Success,
@@ -34,7 +32,6 @@ export default function AddCommand() {
       });
 
       pop();
-
     },
     validation: {
       name: FormValidation.Required,
@@ -43,23 +40,26 @@ export default function AddCommand() {
     },
   });
 
-
   return (
     <Form
       actions={
         <ActionPanel>
-          <Action.SubmitForm onSubmit={ handleSubmit } />
+          <Action.SubmitForm onSubmit={handleSubmit} />
         </ActionPanel>
       }
     >
       <Form.Description text="Fill in the details of the delivery you want to track." />
       <Form.TextField title="Name" placeholder="Name for the delivery" {...itemProps.name} />
-      <Form.Dropdown title="Carrier"  {...itemProps.carrier}>
-        {
-          Array.from(providers.values()).map(provider => (<Form.Dropdown.Item key={ provider.name } value={ provider.name } title={ provider.name } />))
-        }
+      <Form.Dropdown title="Carrier" {...itemProps.carrier}>
+        {Array.from(providers.values()).map((provider) => (
+          <Form.Dropdown.Item key={provider.name} value={provider.name} title={provider.name} />
+        ))}
       </Form.Dropdown>
-      <Form.TextField title="Tracking number" placeholder="Tracking number from the carrier" {...itemProps.trackingNumber} />
+      <Form.TextField
+        title="Tracking number"
+        placeholder="Tracking number from the carrier"
+        {...itemProps.trackingNumber}
+      />
     </Form>
   );
 }

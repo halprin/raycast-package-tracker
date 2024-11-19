@@ -28,4 +28,4 @@ const providers: Provider[] = [
   },
 ];
 
-export default new Map(providers.map(provider => [provider.name, provider]));
+export default new Map(providers.map((provider) => [provider.name, provider]));

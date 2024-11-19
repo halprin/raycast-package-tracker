@@ -10,7 +10,8 @@ import {
   Keyboard,
   showToast,
   Toast,
-  confirmAlert, Alert
+  confirmAlert,
+  Alert,
 } from "@raycast/api";
 import tempData from "./tempData";
 import providers from "./providers";
@@ -28,22 +29,38 @@ export default function TrackCommand() {
 
   return (
     <List>
-      {tracking.map(item => (
+      {tracking.map((item) => (
         <List.Item
-          key={ item.id }
-          id={ item.id.toString() }
-          icon={ deliveryIcon(item.packages) }
-          title={ item.name }
-          subtitle={ item.trackingNumber }
-          accessories={ [
+          key={item.id}
+          id={item.id.toString()}
+          icon={deliveryIcon(item.packages)}
+          title={item.name}
+          subtitle={item.trackingNumber}
+          accessories={[
             { text: deliveryAccessory(item.packages) },
             { text: { value: item.carrier, color: providers.get(item.carrier)?.color } },
-          ] }
+          ]}
           actions={
             <ActionPanel>
-              <Action.Push title="Show Details" icon={ Icon.MagnifyingGlass } target={<Detail markdown={`# ${item.name}`} />} />
-              <Action title="Delete Delivery" icon={ Icon.Trash } shortcut={ Keyboard.Shortcut.Common.Remove } style={ Action.Style.Destructive } onAction={ () => deleteTracking(item.id, tracking, setTracking) } />
-              <Action.Push title="Track New Delivery" icon={ Icon.Plus } shortcut={ Keyboard.Shortcut.Common.New } target={ <AddCommand /> } onPop={ () => fetchTracking(setTracking) } />
+              <Action.Push
+                title="Show Details"
+                icon={Icon.MagnifyingGlass}
+                target={<Detail markdown={`# ${item.name}`} />}
+              />
+              <Action
+                title="Delete Delivery"
+                icon={Icon.Trash}
+                shortcut={Keyboard.Shortcut.Common.Remove}
+                style={Action.Style.Destructive}
+                onAction={() => deleteTracking(item.id, tracking, setTracking)}
+              />
+              <Action.Push
+                title="Track New Delivery"
+                icon={Icon.Plus}
+                shortcut={Keyboard.Shortcut.Common.New}
+                target={<AddCommand />}
+                onPop={() => fetchTracking(setTracking)}
+              />
             </ActionPanel>
           }
         />
@@ -53,7 +70,6 @@ export default function TrackCommand() {
 }
 
 async function fetchTracking(setTracking: React.Dispatch<React.SetStateAction<Track[]>>) {
-
   let tracking: Track[] = await getTracking();
 
   if (environment.isDevelopment) {
@@ -62,11 +78,15 @@ async function fetchTracking(setTracking: React.Dispatch<React.SetStateAction<Tr
   }
 
   const sortedTracking = sortTracking(tracking);
-  setTracking(sortedTracking)
+  setTracking(sortedTracking);
 }
 
-async function deleteTracking(id: string, tracking: Track[], setTracking: React.Dispatch<React.SetStateAction<Track[]>>) {
-  const nameOfTrackToDelete = tracking.find(track => track.id === id)?.name ?? "Unknown";
+async function deleteTracking(
+  id: string,
+  tracking: Track[],
+  setTracking: React.Dispatch<React.SetStateAction<Track[]>>,
+) {
+  const nameOfTrackToDelete = tracking.find((track) => track.id === id)?.name ?? "Unknown";
 
   const options: Alert.Options = {
     title: "Delete Delivery",
@@ -78,7 +98,7 @@ async function deleteTracking(id: string, tracking: Track[], setTracking: React.
     },
   };
 
-  const confirmation = await confirmAlert(options)
+  const confirmation = await confirmAlert(options);
   if (!confirmation) {
     return;
   }
@@ -95,10 +115,9 @@ async function deleteTracking(id: string, tracking: Track[], setTracking: React.
 
 function sortTracking(tracks: Track[]): Track[] {
   return tracks.toSorted((aTrack, bTrack) => {
-
     if (aTrack.packages.length > 0 && bTrack.packages.length == 0) {
       // a has packages, and b doesn't
-      return -1
+      return -1;
     } else if (aTrack.packages.length == 0 && bTrack.packages.length > 0) {
       // a doesn't have any packages, and b does
       return 1;
@@ -107,8 +126,8 @@ function sortTracking(tracks: Track[]): Track[] {
       return 0;
     }
 
-    const aAllPackagesDelivered = aTrack.packages.every(aPackage => aPackage.delivered)
-    const bAllPackagesDelivered = bTrack.packages.every(bPackage => bPackage.delivered)
+    const aAllPackagesDelivered = aTrack.packages.every((aPackage) => aPackage.delivered);
+    const bAllPackagesDelivered = bTrack.packages.every((bPackage) => bPackage.delivered);
 
     if (aAllPackagesDelivered && !bAllPackagesDelivered) {
       // a has all packages delivered, and b doesn't
@@ -130,34 +149,35 @@ function sortTracking(tracks: Track[]): Track[] {
     } else if (!aEarliestDeliveryDate && !bEarliestDeliveryDate) {
       // a doesn't have a delivery date, and b doesn't either
 
-      const aSomePackagesDelivered = aTrack.packages.some(aPackage => aPackage.delivered)
-      const bSomePackagesDelivered = bTrack.packages.some(bPackage => bPackage.delivered)
+      const aSomePackagesDelivered = aTrack.packages.some((aPackage) => aPackage.delivered);
+      const bSomePackagesDelivered = bTrack.packages.some((bPackage) => bPackage.delivered);
 
       if (aSomePackagesDelivered && !bSomePackagesDelivered) {
         // a has some packages delivered, and b doesn't
         return -1;
       } else if (!aSomePackagesDelivered && bSomePackagesDelivered) {
         // a doesn't have any packages delivered, and b does
-        return 1
+        return 1;
       }
 
       // a and b both don't have any packages delivered
       return 0;
     }
 
-    const dayDifferenceDifference = calculateDayDifference(aEarliestDeliveryDate!) - calculateDayDifference(bEarliestDeliveryDate!);
+    const dayDifferenceDifference =
+      calculateDayDifference(aEarliestDeliveryDate!) - calculateDayDifference(bEarliestDeliveryDate!);
     if (dayDifferenceDifference == 0) {
       // both tracks tie for earliest delivery
 
-      const aSomePackagesDelivered = aTrack.packages.some(aPackage => aPackage.delivered)
-      const bSomePackagesDelivered = bTrack.packages.some(bPackage => bPackage.delivered)
+      const aSomePackagesDelivered = aTrack.packages.some((aPackage) => aPackage.delivered);
+      const bSomePackagesDelivered = bTrack.packages.some((bPackage) => bPackage.delivered);
 
       if (aSomePackagesDelivered && !bSomePackagesDelivered) {
         // a has some packages delivered, and b doesn't
         return -1;
       } else if (!aSomePackagesDelivered && bSomePackagesDelivered) {
         // a doesn't have any packages delivered, and b does
-        return 1
+        return 1;
       }
 
       // a and b both don't have any packages delivered
@@ -169,16 +189,15 @@ function sortTracking(tracks: Track[]): Track[] {
 }
 
 function deliveryIcon(packages: Package[]): Icon {
-
   if (packages.length == 0) {
     // there are no packages for this tracking, possible before data has been gotten from API
-    return Icon.QuestionMarkCircle
+    return Icon.QuestionMarkCircle;
   }
 
-  const somePackagesDelivered = packages.some(aPackage => aPackage.delivered)
+  const somePackagesDelivered = packages.some((aPackage) => aPackage.delivered);
   let allPackagesDelivered = false;
   if (somePackagesDelivered) {
-    allPackagesDelivered = packages.every(aPackage => aPackage.delivered)
+    allPackagesDelivered = packages.every((aPackage) => aPackage.delivered);
   }
 
   if (allPackagesDelivered) {
@@ -190,7 +209,7 @@ function deliveryIcon(packages: Package[]): Icon {
   return Icon.CircleProgress;
 }
 
-function deliveryAccessory(packages: Package[]): { value: string, color?: Color } {
+function deliveryAccessory(packages: Package[]): { value: string; color?: Color } {
   // check whether all, some, or no packages in a track are delivered
 
   if (packages.length == 0) {
@@ -200,10 +219,10 @@ function deliveryAccessory(packages: Package[]): { value: string, color?: Color 
     };
   }
 
-  const somePackagesDelivered = packages.some(aPackage => aPackage.delivered)
+  const somePackagesDelivered = packages.some((aPackage) => aPackage.delivered);
   let allPackagesDelivered = false;
   if (somePackagesDelivered) {
-    allPackagesDelivered = packages.every(aPackage => aPackage.delivered)
+    allPackagesDelivered = packages.every((aPackage) => aPackage.delivered);
   }
 
   if (allPackagesDelivered) {
@@ -223,13 +242,13 @@ function deliveryAccessory(packages: Package[]): { value: string, color?: Color 
 
   let accessoryColor = undefined;
   if (somePackagesDelivered && !allPackagesDelivered) {
-    accessoryText = accessoryText + "; some packages delivered"
-    accessoryColor = Color.Blue
+    accessoryText = accessoryText + "; some packages delivered";
+    accessoryColor = Color.Blue;
   }
 
   return {
     value: accessoryText,
-    color: accessoryColor
+    color: accessoryColor,
   };
 }
 
@@ -250,7 +269,9 @@ function getPackageWithEarliestDeliveryDate(packages: Package[]): Package {
       return current;
     }
 
-    if (Math.abs(currentDeliveryDate.getTime() - now.getTime()) < Math.abs(closestDeliveryDate.getTime() - now.getTime())) {
+    if (
+      Math.abs(currentDeliveryDate.getTime() - now.getTime()) < Math.abs(closestDeliveryDate.getTime() - now.getTime())
+    ) {
       return current;
     } else {
       return closest;
