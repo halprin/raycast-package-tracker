@@ -42,7 +42,7 @@ export default function TrackDeliveriesCommand() {
           subtitle={item.trackingNumber}
           accessories={[
             { text: deliveryAccessory(packages.get(item.id)) },
-            { text: { value: item.carrier, color: providers.get(item.carrier)?.color } },
+            { text: { value: providers.get(item.carrier)?.name, color: providers.get(item.carrier)?.color } },
           ]}
           actions={
             <ActionPanel>

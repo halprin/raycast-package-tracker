@@ -55,7 +55,7 @@ export default function TrackNewDeliveryView({
       <Form.TextField title="Name" placeholder="Name for the delivery" {...itemProps.name} />
       <Form.Dropdown title="Carrier" {...itemProps.carrier}>
         {Array.from(providers.values()).map((provider) => (
-          <Form.Dropdown.Item key={provider.name} value={provider.name} title={provider.name} />
+          <Form.Dropdown.Item key={provider.id} value={provider.id} title={provider.name} />
         ))}
       </Form.Dropdown>
       <Form.TextField
