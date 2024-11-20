@@ -50,14 +50,14 @@
     },
     {
       "name": "upsClientId",
-      "title": "USPS Client ID",
+      "title": "UPS Client ID",
       "description": "The client ID for your app in the UPS developer portal",
       "type": "password",
       "required": false
     },
     {
       "name": "upsClientSecret",
-      "title": "USPS Client Secret",
+      "title": "UPS Client Secret",
       "description": "The client secret for your app in the UPS developer portal",
       "type": "password",
       "required": false
