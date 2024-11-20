@@ -35,16 +35,30 @@
   ],
   "preferences": [
     {
-      "name": "USPSConsumerKey",
+      "name": "uspsConsumerKey",
       "title": "USPS Consumer Key",
       "description": "The consumer key from your app in the USPS developer portal",
       "type": "password",
       "required": false
     },
     {
-      "name": "USPSConsumerSecret",
+      "name": "uspsConsumerSecret",
       "title": "USPS Consumer Secret",
       "description": "The consumer secret from your app in the USPS developer portal",
+      "type": "password",
+      "required": false
+    },
+    {
+      "name": "upsClientId",
+      "title": "USPS Client ID",
+      "description": "The client ID for your app in the UPS developer portal",
+      "type": "password",
+      "required": false
+    },
+    {
+      "name": "upsClientSecret",
+      "title": "USPS Client Secret",
+      "description": "The client secret for your app in the UPS developer portal",
       "type": "password",
       "required": false
     }
