@@ -3,4 +3,5 @@ export interface Track {
   name: string;
   trackingNumber: string;
   carrier: string;
+  debug?: boolean;
 }
