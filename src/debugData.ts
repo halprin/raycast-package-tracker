@@ -1,5 +1,5 @@
 import { Track } from "./track";
-import { Package } from "./package";
+import { PackageMap } from "./package";
 
 export const debugTracks: Track[] = [
   {
@@ -46,36 +46,36 @@ export const debugTracks: Track[] = [
   },
 ];
 
-export const debugPackages = new Map<string, Package[]>();
-debugPackages.set(debugTracks[0].id, [
+export const debugPackages: PackageMap = {};
+debugPackages[debugTracks[0].id] = [
   {
     deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 4 days ahead
     delivered: false,
     activity: [],
   },
-]);
-debugPackages.set(debugTracks[1].id, [
+];
+debugPackages[debugTracks[1].id] = [
   {
     deliveryDate: new Date("2024-11-09"),
     delivered: true,
     activity: [],
   },
-]);
-debugPackages.set(debugTracks[2].id, [
+];
+debugPackages[debugTracks[2].id] = [
   {
     deliveryDate: new Date(),
     delivered: false,
     activity: [],
   },
-]);
-debugPackages.set(debugTracks[3].id, [
+];
+debugPackages[debugTracks[3].id] = [
   {
     deliveryDate: undefined,
     delivered: false,
     activity: [],
   },
-]);
-debugPackages.set(debugTracks[4].id, [
+];
+debugPackages[debugTracks[4].id] = [
   {
     deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 4 days ahead
     delivered: false,
@@ -91,8 +91,8 @@ debugPackages.set(debugTracks[4].id, [
     delivered: true,
     activity: [],
   },
-]);
-debugPackages.set(debugTracks[5].id, [
+];
+debugPackages[debugTracks[5].id] = [
   {
     deliveryDate: undefined,
     delivered: false,
@@ -108,4 +108,4 @@ debugPackages.set(debugTracks[5].id, [
     delivered: false,
     activity: [],
   },
-]);
+];

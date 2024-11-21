@@ -14,10 +14,11 @@ import {
 } from "@raycast/api";
 import { debugTracks, debugPackages } from "./debugData";
 import providers from "./providers";
-import { Package } from "./package";
+import { Package, PackageMap } from "./package";
 import { Track } from "./track";
 import { useCachedState, useLocalStorage } from "@raycast/utils";
 import TrackNewDeliveryView from "./views/TrackNewDelivery";
+import { useEffect } from "react";
 
 export default function TrackDeliveriesCommand() {
   const {
@@ -26,22 +27,37 @@ export default function TrackDeliveriesCommand() {
     isLoading,
   } = useLocalStorage<Track[]>("tracking", environment.isDevelopment ? debugTracks : []);
 
-  const [packages] = useCachedState<Map<string, Package[]>>(
+  const [packages, setPackages] = useCachedState<PackageMap>(
     "packages",
-    environment.isDevelopment ? debugPackages : new Map<string, Package[]>(),
+    environment.isDevelopment ? debugPackages : {},
   );
 
+  useEffect(() => {
+    if (!tracking) {
+      return;
+    }
+
+    refreshTracking(tracking, setPackages);
+  }, [tracking, setPackages]);
+
   return (
-    <List isLoading={isLoading}>
+    <List isLoading={isLoading} actions={<ActionPanel>
+      <Action.Push
+        title="Track New Delivery"
+        icon={Icon.Plus}
+        shortcut={Keyboard.Shortcut.Common.New}
+        target={<TrackNewDeliveryView props={{ tracking, setTracking, isLoading }} />}
+      />
+    </ActionPanel>}>
       {sortTracking(tracking ?? [], packages).map((item) => (
         <List.Item
           key={item.id}
-          id={item.id.toString()}
-          icon={deliveryIcon(packages.get(item.id))}
+          id={item.id}
+          icon={deliveryIcon(packages[item.id])}
           title={item.name}
           subtitle={item.trackingNumber}
           accessories={[
-            { text: deliveryAccessory(packages.get(item.id)) },
+            { text: deliveryAccessory(packages[item.id]) },
             { text: { value: providers.get(item.carrier)?.name, color: providers.get(item.carrier)?.color } },
           ]}
           actions={
@@ -70,6 +86,22 @@ export default function TrackDeliveriesCommand() {
       ))}
     </List>
   );
+}
+
+async function refreshTracking(tracking: Track[], setPackages: (value: (((prevState: PackageMap) => PackageMap) | PackageMap)) => void) {
+  for (const track of tracking.filter(track => !track.debug)) {
+    const provider = providers.get(track.carrier);
+    if (!provider) {
+      continue;
+    }
+
+    const refreshedPackages = await provider.updateTracking(track.trackingNumber)
+
+    setPackages(packagesMap => {
+      packagesMap[track.id] = refreshedPackages;
+      return packagesMap;
+    });
+  }
 }
 
 async function deleteTracking(
@@ -108,10 +140,10 @@ async function deleteTracking(
   });
 }
 
-function sortTracking(tracks: Track[], packages: Map<string, Package[]>): Track[] {
+function sortTracking(tracks: Track[], packages: PackageMap): Track[] {
   return tracks.toSorted((aTrack, bTrack) => {
-    const aPackages = packages.get(aTrack.id) ?? [];
-    const bPackages = packages.get(bTrack.id) ?? [];
+    const aPackages = packages[aTrack.id] ?? [];
+    const bPackages = packages[bTrack.id] ?? [];
 
     if (aPackages.length > 0 && bPackages.length == 0) {
       // a has packages, and b doesn't

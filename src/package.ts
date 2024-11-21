@@ -9,3 +9,7 @@ export interface Package {
   delivered: boolean;
   activity: Activity[];
 }
+
+export interface PackageMap {
+  [key: string]: Package[],
+}

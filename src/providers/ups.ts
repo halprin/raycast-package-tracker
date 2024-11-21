@@ -1,8 +1,9 @@
 import { Package } from "../package";
 import { getPreferenceValues } from "@raycast/api";
+import fetch from "node-fetch";
+import { randomUUID } from "node:crypto";
 
 async function updateUpsTracking(trackingNumber: string): Promise<Package[]> {
-  console.log(trackingNumber);
   const preferences = getPreferenceValues<Preferences.TrackDeliveries>();
   const clientId = preferences.upsClientId;
   const clientSecret = preferences.upsClientSecret;
@@ -11,11 +12,17 @@ async function updateUpsTracking(trackingNumber: string): Promise<Package[]> {
     return [];
   }
 
+  console.log("Logging into UPS")
   const loginResponse = await login(clientId, clientSecret);
 
+  console.log(`Updating tracking for ${trackingNumber}`);
   const upsTrackingInfo = await track(trackingNumber, loginResponse.access_token);
 
-  return convertUpsTrackingToPackages(upsTrackingInfo);
+  const packages = convertUpsTrackingToPackages(upsTrackingInfo);
+
+  console.log(`Updated tracking for ${trackingNumber}`);
+
+  return packages;
 }
 
 interface LoginResponseBody {
@@ -40,12 +47,13 @@ async function login(clientId: string, clientSecret: string): Promise<LoginRespo
   });
 
   if (!response.ok) {
+    console.log(response.status, response.statusText, await response.text());
     throw new Error("Failed to login to UPS");
   }
 
   const loginResponse = (await response.json()) as LoginResponseBody;
   if (!loginResponse) {
-    throw new Error("Failed to login to UPS");
+    throw new Error("Failed to parse UPS login response");
   }
 
   return loginResponse;
@@ -85,17 +93,20 @@ async function track(trackingNumber: string, accessToken: string): Promise<UpsTr
       headers: {
         Authorization: "Bearer " + accessToken,
         "Content-Type": "application/json",
+        "transactionSrc": "raycast",
+        "transId": randomUUID().toString(),
       },
     },
   );
 
   if (!response.ok) {
+    console.log(response.status, response.statusText, await response.text());
     throw new Error(`Failed to get UPS tracking for ${trackingNumber}`);
   }
 
   const trackingResponse = (await response.json()) as UpsTrackingInfo;
   if (!trackingResponse) {
-    throw new Error(`Failed to get UPS tracking for ${trackingNumber}`);
+    throw new Error(`Failed to parse UPS track response for ${trackingNumber}`);
   }
 
   return trackingResponse;
