@@ -12,7 +12,7 @@ async function updateUpsTracking(trackingNumber: string): Promise<Package[]> {
     return [];
   }
 
-  console.log("Logging into UPS")
+  console.log("Logging into UPS");
   const loginResponse = await login(clientId, clientSecret);
 
   console.log(`Updating tracking for ${trackingNumber}`);
@@ -87,14 +87,14 @@ interface UpsTrackingInfo {
 
 async function track(trackingNumber: string, accessToken: string): Promise<UpsTrackingInfo> {
   const response = await fetch(
-    `https://wwwcie.ups.com//api/track/v1/details/${trackingNumber}?locale=en_US&returnSignature=false`,
+    `https://wwwcie.ups.com/api/track/v1/details/${trackingNumber}?locale=en_US&returnSignature=false`,
     {
       method: "GET",
       headers: {
         Authorization: "Bearer " + accessToken,
         "Content-Type": "application/json",
-        "transactionSrc": "raycast",
-        "transId": randomUUID().toString(),
+        transactionSrc: "raycast",
+        transId: randomUUID().toString(),
       },
     },
   );

@@ -11,5 +11,5 @@ export interface Package {
 }
 
 export interface PackageMap {
-  [key: string]: Package[],
+  [key: string]: Package[];
 }

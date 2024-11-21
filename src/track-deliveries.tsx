@@ -41,14 +41,19 @@ export default function TrackDeliveriesCommand() {
   }, [tracking, setPackages]);
 
   return (
-    <List isLoading={isLoading} actions={<ActionPanel>
-      <Action.Push
-        title="Track New Delivery"
-        icon={Icon.Plus}
-        shortcut={Keyboard.Shortcut.Common.New}
-        target={<TrackNewDeliveryView props={{ tracking, setTracking, isLoading }} />}
-      />
-    </ActionPanel>}>
+    <List
+      isLoading={isLoading}
+      actions={
+        <ActionPanel>
+          <Action.Push
+            title="Track New Delivery"
+            icon={Icon.Plus}
+            shortcut={Keyboard.Shortcut.Common.New}
+            target={<TrackNewDeliveryView props={{ tracking, setTracking, isLoading }} />}
+          />
+        </ActionPanel>
+      }
+    >
       {sortTracking(tracking ?? [], packages).map((item) => (
         <List.Item
           key={item.id}
@@ -88,16 +93,19 @@ export default function TrackDeliveriesCommand() {
   );
 }
 
-async function refreshTracking(tracking: Track[], setPackages: (value: (((prevState: PackageMap) => PackageMap) | PackageMap)) => void) {
-  for (const track of tracking.filter(track => !track.debug)) {
+async function refreshTracking(
+  tracking: Track[],
+  setPackages: (value: ((prevState: PackageMap) => PackageMap) | PackageMap) => void,
+) {
+  for (const track of tracking.filter((track) => !track.debug)) {
     const provider = providers.get(track.carrier);
     if (!provider) {
       continue;
     }
 
-    const refreshedPackages = await provider.updateTracking(track.trackingNumber)
+    const refreshedPackages = await provider.updateTracking(track.trackingNumber);
 
-    setPackages(packagesMap => {
+    setPackages((packagesMap) => {
       packagesMap[track.id] = refreshedPackages;
       return packagesMap;
     });
