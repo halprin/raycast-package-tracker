@@ -33,12 +33,13 @@ export default function TrackDeliveriesCommand() {
   );
 
   useEffect(() => {
-    if (!tracking) {
+    if (!tracking || !packages) {
+      // don't do anything until both tracking and packages are initialized
       return;
     }
 
-    refreshTracking(tracking, setPackages);
-  }, [tracking, setPackages]);
+    refreshTracking(tracking, packages, setPackages);
+  }, [tracking]);
 
   return (
     <List
@@ -53,11 +54,11 @@ export default function TrackDeliveriesCommand() {
         <List.Item
           key={item.id}
           id={item.id}
-          icon={deliveryIcon(packages[item.id])}
+          icon={deliveryIcon(packages[item.id]?.packages)}
           title={item.name}
           subtitle={item.trackingNumber}
           accessories={[
-            { text: deliveryAccessory(packages[item.id]) },
+            { text: deliveryAccessory(packages[item.id]?.packages) },
             { text: { value: providers.get(item.carrier)?.name, color: providers.get(item.carrier)?.color } },
           ]}
           actions={
@@ -85,18 +86,40 @@ export default function TrackDeliveriesCommand() {
 
 async function refreshTracking(
   tracking: Track[],
+  packages: PackageMap,
   setPackages: (value: ((prevState: PackageMap) => PackageMap) | PackageMap) => void,
 ) {
+  const now = new Date();
+
   for (const track of tracking.filter((track) => !track.debug)) {
     const provider = providers.get(track.carrier);
     if (!provider) {
       continue;
     }
 
+    const currentTrackPackages = packages[track.id];
+
+    if (
+      currentTrackPackages &&
+      currentTrackPackages.lastUpdated &&
+      now.getTime() - currentTrackPackages.lastUpdated.getTime() <= 30 * 60 * 1000
+    ) {
+      // we have packages for this track (else cache is gone, and we need to refresh),
+      // we've recorded the last update time (else we have never refreshed),
+      // and it's been less than 30 minutes,
+      // then...
+      // skip updating
+      continue;
+    }
+
     try {
       const refreshedPackages = await provider.updateTracking(track.trackingNumber);
+
       setPackages((packagesMap) => {
-        packagesMap[track.id] = refreshedPackages;
+        packagesMap[track.id] = {
+          packages: refreshedPackages,
+          lastUpdated: now,
+        };
         return packagesMap;
       });
     } catch (error) {
@@ -147,8 +170,8 @@ async function deleteTracking(
 
 function sortTracking(tracks: Track[], packages: PackageMap): Track[] {
   return tracks.toSorted((aTrack, bTrack) => {
-    const aPackages = packages[aTrack.id] ?? [];
-    const bPackages = packages[bTrack.id] ?? [];
+    const aPackages = packages[aTrack.id]?.packages ?? [];
+    const bPackages = packages[bTrack.id]?.packages ?? [];
 
     if (aPackages.length > 0 && bPackages.length == 0) {
       // a has packages, and b doesn't

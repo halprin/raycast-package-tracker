@@ -47,65 +47,77 @@ export const debugTracks: Track[] = [
 ];
 
 export const debugPackages: PackageMap = {};
-debugPackages[debugTracks[0].id] = [
-  {
-    deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 4 days ahead
-    delivered: false,
-    activity: [],
-  },
-];
-debugPackages[debugTracks[1].id] = [
-  {
-    deliveryDate: new Date("2024-11-09"),
-    delivered: true,
-    activity: [],
-  },
-];
-debugPackages[debugTracks[2].id] = [
-  {
-    deliveryDate: new Date(),
-    delivered: false,
-    activity: [],
-  },
-];
-debugPackages[debugTracks[3].id] = [
-  {
-    deliveryDate: undefined,
-    delivered: false,
-    activity: [],
-  },
-];
-debugPackages[debugTracks[4].id] = [
-  {
-    deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 4 days ahead
-    delivered: false,
-    activity: [],
-  },
-  {
-    deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 2 days ahead
-    delivered: false,
-    activity: [],
-  },
-  {
-    deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 1 days ahead
-    delivered: true,
-    activity: [],
-  },
-];
-debugPackages[debugTracks[5].id] = [
-  {
-    deliveryDate: undefined,
-    delivered: false,
-    activity: [],
-  },
-  {
-    deliveryDate: undefined,
-    delivered: true,
-    activity: [],
-  },
-  {
-    deliveryDate: undefined,
-    delivered: false,
-    activity: [],
-  },
-];
+debugPackages[debugTracks[0].id] = {
+  packages: [
+    {
+      deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 4 days ahead
+      delivered: false,
+      activity: [],
+    },
+  ],
+};
+debugPackages[debugTracks[1].id] = {
+  packages: [
+    {
+      deliveryDate: new Date("2024-11-09"),
+      delivered: true,
+      activity: [],
+    },
+  ],
+};
+debugPackages[debugTracks[2].id] = {
+  packages: [
+    {
+      deliveryDate: new Date(),
+      delivered: false,
+      activity: [],
+    },
+  ],
+};
+debugPackages[debugTracks[3].id] = {
+  packages: [
+    {
+      deliveryDate: undefined,
+      delivered: false,
+      activity: [],
+    },
+  ],
+};
+debugPackages[debugTracks[4].id] = {
+  packages: [
+    {
+      deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 4 days ahead
+      delivered: false,
+      activity: [],
+    },
+    {
+      deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 2 days ahead
+      delivered: false,
+      activity: [],
+    },
+    {
+      deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 1 days ahead
+      delivered: true,
+      activity: [],
+    },
+  ],
+};
+debugPackages[debugTracks[5].id] = {
+  packages: [
+    {
+      deliveryDate: undefined,
+      delivered: false,
+      activity: [],
+    },
+    {
+      deliveryDate: undefined,
+      delivered: true,
+      activity: [],
+    },
+    {
+      deliveryDate: undefined,
+      delivered: false,
+      activity: [],
+    },
+  ],
+};
