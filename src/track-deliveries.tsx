@@ -17,7 +17,7 @@ import providers from "./providers";
 import { Package, PackageMap } from "./package";
 import { Track } from "./track";
 import { useCachedState, useLocalStorage } from "@raycast/utils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import TrackNewDeliveryAction from "./views/TrackNewDeliveryAction";
 
 export default function TrackDeliveriesCommand() {
@@ -32,18 +32,21 @@ export default function TrackDeliveriesCommand() {
     environment.isDevelopment ? debugPackages : {},
   );
 
+  const [trackingIsLoading, setTrackingIsLoading] = useState(false);
+
   useEffect(() => {
     if (!tracking || !packages) {
       // don't do anything until both tracking and packages are initialized
       return;
     }
 
-    refreshTracking(tracking, packages, setPackages);
+    setTrackingIsLoading(true)
+    refreshTracking(tracking, packages, setPackages, setTrackingIsLoading);
   }, [tracking]);
 
   return (
     <List
-      isLoading={isLoading}
+      isLoading={isLoading || trackingIsLoading}
       actions={
         <ActionPanel>
           <TrackNewDeliveryAction tracking={tracking} setTracking={setTracking} isLoading={isLoading} />
@@ -87,8 +90,8 @@ export default function TrackDeliveriesCommand() {
 async function refreshTracking(
   tracking: Track[],
   packages: PackageMap,
-  setPackages: (value: ((prevState: PackageMap) => PackageMap) | PackageMap) => void,
-) {
+  setPackages: (value: (((prevState: PackageMap) => PackageMap) | PackageMap)) => void,
+  setTrackingIsLoading: (value: (((prevState: boolean) => boolean) | boolean)) => void) {
   const now = new Date();
 
   for (const track of tracking.filter((track) => !track.debug)) {
@@ -130,6 +133,8 @@ async function refreshTracking(
       });
     }
   }
+
+  setTrackingIsLoading(false);
 }
 
 async function deleteTracking(
