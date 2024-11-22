@@ -11,9 +11,13 @@ interface AddTrackingForm {
 }
 
 export default function TrackNewDeliveryView({
-  props: { tracking, setTracking, isLoading },
+  tracking,
+  setTracking,
+  isLoading,
 }: {
-  props: { tracking?: Track[]; setTracking: (value: Track[]) => Promise<void>; isLoading: boolean };
+  tracking?: Track[];
+  setTracking: (value: Track[]) => Promise<void>;
+  isLoading: boolean;
 }) {
   const { pop } = useNavigation();
 

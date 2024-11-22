@@ -49,7 +49,7 @@ export default function TrackDeliveriesCommand() {
             title="Track New Delivery"
             icon={Icon.Plus}
             shortcut={Keyboard.Shortcut.Common.New}
-            target={<TrackNewDeliveryView props={{ tracking, setTracking, isLoading }} />}
+            target={<TrackNewDeliveryView tracking={tracking} setTracking={setTracking} isLoading={isLoading} />}
           />
         </ActionPanel>
       }
@@ -83,7 +83,7 @@ export default function TrackDeliveriesCommand() {
                 title="Track New Delivery"
                 icon={Icon.Plus}
                 shortcut={Keyboard.Shortcut.Common.New}
-                target={<TrackNewDeliveryView props={{ tracking, setTracking, isLoading }} />}
+                target={<TrackNewDeliveryView tracking={tracking} setTracking={setTracking} isLoading={isLoading} />}
               />
             </ActionPanel>
           }
