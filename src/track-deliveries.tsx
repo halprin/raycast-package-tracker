@@ -17,8 +17,8 @@ import providers from "./providers";
 import { Package, PackageMap } from "./package";
 import { Track } from "./track";
 import { useCachedState, useLocalStorage } from "@raycast/utils";
-import TrackNewDeliveryView from "./views/TrackNewDelivery";
 import { useEffect } from "react";
+import TrackNewDeliveryAction from "./views/TrackNewDeliveryAction";
 
 export default function TrackDeliveriesCommand() {
   const {
@@ -45,12 +45,7 @@ export default function TrackDeliveriesCommand() {
       isLoading={isLoading}
       actions={
         <ActionPanel>
-          <Action.Push
-            title="Track New Delivery"
-            icon={Icon.Plus}
-            shortcut={Keyboard.Shortcut.Common.New}
-            target={<TrackNewDeliveryView tracking={tracking} setTracking={setTracking} isLoading={isLoading} />}
-          />
+          <TrackNewDeliveryAction tracking={tracking} setTracking={setTracking} isLoading={isLoading} />
         </ActionPanel>
       }
     >
@@ -79,12 +74,7 @@ export default function TrackDeliveriesCommand() {
                 style={Action.Style.Destructive}
                 onAction={() => deleteTracking(item.id, tracking, setTracking)}
               />
-              <Action.Push
-                title="Track New Delivery"
-                icon={Icon.Plus}
-                shortcut={Keyboard.Shortcut.Common.New}
-                target={<TrackNewDeliveryView tracking={tracking} setTracking={setTracking} isLoading={isLoading} />}
-              />
+              <TrackNewDeliveryAction tracking={tracking} setTracking={setTracking} isLoading={isLoading} />
             </ActionPanel>
           }
         />

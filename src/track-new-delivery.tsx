@@ -2,7 +2,7 @@ import { environment } from "@raycast/api";
 import { useLocalStorage } from "@raycast/utils";
 import { Track } from "./track";
 import { debugTracks } from "./debugData";
-import TrackNewDeliveryView from "./views/TrackNewDelivery";
+import TrackNewDeliveryView from "./views/TrackNewDeliveryView";
 
 export default function TrackNewDeliveryCommand() {
   const {
@@ -11,5 +11,5 @@ export default function TrackNewDeliveryCommand() {
     isLoading,
   } = useLocalStorage<Track[]>("tracking", environment.isDevelopment ? debugTracks : []);
 
-  return <TrackNewDeliveryView props={{ tracking, setTracking, isLoading }} />;
+  return <TrackNewDeliveryView tracking={tracking} setTracking={setTracking} isLoading={isLoading} />;
 }
