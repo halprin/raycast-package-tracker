@@ -1,40 +1,40 @@
 import { Form, ActionPanel, Action, showToast, Toast, useNavigation } from "@raycast/api";
 import providers from "../providers";
 import { FormValidation, useForm } from "@raycast/utils";
-import { Track } from "../track";
+import { Delivery } from "../delivery";
 import { randomUUID } from "node:crypto";
 
-interface AddTrackingForm {
+interface AddDeliveryForm {
   name: string;
   carrier: string;
   trackingNumber: string;
 }
 
 export default function TrackNewDeliveryView({
-  tracking,
-  setTracking,
+  deliveries,
+  setDeliveries,
   isLoading,
 }: {
-  tracking?: Track[];
-  setTracking: (value: Track[]) => Promise<void>;
+  deliveries?: Delivery[];
+  setDeliveries: (value: Delivery[]) => Promise<void>;
   isLoading: boolean;
 }) {
   const { pop } = useNavigation();
 
-  const { handleSubmit, itemProps } = useForm<AddTrackingForm>({
-    onSubmit: async (trackingForm) => {
-      const track: Track = {
+  const { handleSubmit, itemProps } = useForm<AddDeliveryForm>({
+    onSubmit: async (deliveryForm) => {
+      const track: Delivery = {
         id: randomUUID().toString(),
-        name: trackingForm.name,
-        trackingNumber: trackingForm.trackingNumber,
-        carrier: trackingForm.carrier,
+        name: deliveryForm.name,
+        trackingNumber: deliveryForm.trackingNumber,
+        carrier: deliveryForm.carrier,
       };
-      await setTracking((tracking || []).concat(track));
+      await setDeliveries((deliveries || []).concat(track));
 
       await showToast({
         style: Toast.Style.Success,
         title: "New Delivery Added",
-        message: trackingForm.name,
+        message: deliveryForm.name,
       });
 
       pop();

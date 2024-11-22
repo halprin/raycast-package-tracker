@@ -1,7 +1,7 @@
-import { Track } from "./track";
+import { Delivery } from "./delivery";
 import { PackageMap } from "./package";
 
-export const debugTracks: Track[] = [
+export const debugDeliveries: Delivery[] = [
   {
     id: "E2836A4F-8BC9-463D-A703-EDFF8D1580D9",
     name: "undelivered package that is estimated ahead",
@@ -47,7 +47,7 @@ export const debugTracks: Track[] = [
 ];
 
 export const debugPackages: PackageMap = {};
-debugPackages[debugTracks[0].id] = {
+debugPackages[debugDeliveries[0].id] = {
   packages: [
     {
       deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 4 days ahead
@@ -56,7 +56,7 @@ debugPackages[debugTracks[0].id] = {
     },
   ],
 };
-debugPackages[debugTracks[1].id] = {
+debugPackages[debugDeliveries[1].id] = {
   packages: [
     {
       deliveryDate: new Date("2024-11-09"),
@@ -65,7 +65,7 @@ debugPackages[debugTracks[1].id] = {
     },
   ],
 };
-debugPackages[debugTracks[2].id] = {
+debugPackages[debugDeliveries[2].id] = {
   packages: [
     {
       deliveryDate: new Date(),
@@ -74,7 +74,7 @@ debugPackages[debugTracks[2].id] = {
     },
   ],
 };
-debugPackages[debugTracks[3].id] = {
+debugPackages[debugDeliveries[3].id] = {
   packages: [
     {
       deliveryDate: undefined,
@@ -83,7 +83,7 @@ debugPackages[debugTracks[3].id] = {
     },
   ],
 };
-debugPackages[debugTracks[4].id] = {
+debugPackages[debugDeliveries[4].id] = {
   packages: [
     {
       deliveryDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 4), // 4 days ahead
@@ -102,7 +102,7 @@ debugPackages[debugTracks[4].id] = {
     },
   ],
 };
-debugPackages[debugTracks[5].id] = {
+debugPackages[debugDeliveries[5].id] = {
   packages: [
     {
       deliveryDate: undefined,

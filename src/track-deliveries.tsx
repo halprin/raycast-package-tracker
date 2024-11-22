@@ -12,20 +12,20 @@ import {
   confirmAlert,
   Alert,
 } from "@raycast/api";
-import { debugTracks, debugPackages } from "./debugData";
+import { debugDeliveries, debugPackages } from "./debugData";
 import providers from "./providers";
 import { Package, PackageMap } from "./package";
-import { Track } from "./track";
+import { Delivery } from "./delivery";
 import { useCachedState, useLocalStorage } from "@raycast/utils";
 import { useEffect, useState } from "react";
 import TrackNewDeliveryAction from "./views/TrackNewDeliveryAction";
 
 export default function TrackDeliveriesCommand() {
   const {
-    value: tracking,
-    setValue: setTracking,
+    value: deliveries,
+    setValue: setDeliveries,
     isLoading,
-  } = useLocalStorage<Track[]>("tracking", environment.isDevelopment ? debugTracks : []);
+  } = useLocalStorage<Delivery[]>("deliveries", environment.isDevelopment ? debugDeliveries : []);
 
   const [packages, setPackages] = useCachedState<PackageMap>(
     "packages",
@@ -35,25 +35,25 @@ export default function TrackDeliveriesCommand() {
   const [trackingIsLoading, setTrackingIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!tracking || !packages) {
-      // don't do anything until both tracking and packages are initialized
+    if (!deliveries || !packages) {
+      // don't do anything until both deliveries and packages are initialized
       return;
     }
 
     setTrackingIsLoading(true);
-    refreshTracking(tracking, packages, setPackages, setTrackingIsLoading);
-  }, [tracking]);
+    refreshTracking(deliveries, packages, setPackages, setTrackingIsLoading);
+  }, [deliveries]);
 
   return (
     <List
       isLoading={isLoading || trackingIsLoading}
       actions={
         <ActionPanel>
-          <TrackNewDeliveryAction tracking={tracking} setTracking={setTracking} isLoading={isLoading} />
+          <TrackNewDeliveryAction deliveries={deliveries} setDeliveries={setDeliveries} isLoading={isLoading} />
         </ActionPanel>
       }
     >
-      {sortTracking(tracking ?? [], packages).map((item) => (
+      {sortTracking(deliveries ?? [], packages).map((item) => (
         <List.Item
           key={item.id}
           id={item.id}
@@ -76,9 +76,9 @@ export default function TrackDeliveriesCommand() {
                 icon={Icon.Trash}
                 shortcut={Keyboard.Shortcut.Common.Remove}
                 style={Action.Style.Destructive}
-                onAction={() => deleteTracking(item.id, tracking, setTracking)}
+                onAction={() => deleteTracking(item.id, deliveries, setDeliveries)}
               />
-              <TrackNewDeliveryAction tracking={tracking} setTracking={setTracking} isLoading={isLoading} />
+              <TrackNewDeliveryAction deliveries={deliveries} setDeliveries={setDeliveries} isLoading={isLoading} />
             </ActionPanel>
           }
         />
@@ -88,7 +88,7 @@ export default function TrackDeliveriesCommand() {
 }
 
 async function refreshTracking(
-  tracking: Track[],
+  tracking: Delivery[],
   packages: PackageMap,
   setPackages: (value: ((prevState: PackageMap) => PackageMap) | PackageMap) => void,
   setTrackingIsLoading: (value: ((prevState: boolean) => boolean) | boolean) => void,
@@ -140,8 +140,8 @@ async function refreshTracking(
 
 async function deleteTracking(
   id: string,
-  tracking: Track[] | undefined,
-  setTracking: (value: Track[]) => Promise<void>,
+  tracking: Delivery[] | undefined,
+  setTracking: (value: Delivery[]) => Promise<void>,
 ) {
   if (!tracking) {
     return;
@@ -174,7 +174,7 @@ async function deleteTracking(
   });
 }
 
-function sortTracking(tracks: Track[], packages: PackageMap): Track[] {
+function sortTracking(tracks: Delivery[], packages: PackageMap): Delivery[] {
   return tracks.toSorted((aTrack, bTrack) => {
     const aPackages = packages[aTrack.id]?.packages ?? [];
     const bPackages = packages[bTrack.id]?.packages ?? [];

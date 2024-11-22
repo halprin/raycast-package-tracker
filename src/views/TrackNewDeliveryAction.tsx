@@ -1,14 +1,14 @@
 import { Action, Icon, Keyboard } from "@raycast/api";
 import TrackNewDeliveryView from "./TrackNewDeliveryView";
-import { Track } from "../track";
+import { Delivery } from "../delivery";
 
 export default function TrackNewDeliveryAction({
-  tracking,
-  setTracking,
+  deliveries,
+  setDeliveries,
   isLoading,
 }: {
-  tracking?: Track[];
-  setTracking: (value: Track[]) => Promise<void>;
+  deliveries?: Delivery[];
+  setDeliveries: (value: Delivery[]) => Promise<void>;
   isLoading: boolean;
 }) {
   return (
@@ -16,7 +16,7 @@ export default function TrackNewDeliveryAction({
       title="Track New Delivery"
       icon={Icon.Plus}
       shortcut={Keyboard.Shortcut.Common.New}
-      target={<TrackNewDeliveryView tracking={tracking} setTracking={setTracking} isLoading={isLoading} />}
+      target={<TrackNewDeliveryView deliveries={deliveries} setDeliveries={setDeliveries} isLoading={isLoading} />}
     />
   );
 }

@@ -1,4 +1,4 @@
-export interface Track {
+export interface Delivery {
   id: string;
   name: string;
   trackingNumber: string;
