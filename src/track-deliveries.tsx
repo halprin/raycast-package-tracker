@@ -93,12 +93,19 @@ async function refreshTracking(
       continue;
     }
 
-    const refreshedPackages = await provider.updateTracking(track.trackingNumber);
-
-    setPackages((packagesMap) => {
-      packagesMap[track.id] = refreshedPackages;
-      return packagesMap;
-    });
+    try {
+      const refreshedPackages = await provider.updateTracking(track.trackingNumber);
+      setPackages((packagesMap) => {
+        packagesMap[track.id] = refreshedPackages;
+        return packagesMap;
+      });
+    } catch (error) {
+      await showToast({
+        style: Toast.Style.Failure,
+        title: `Failed to Update Tracking for ${track.trackingNumber}`,
+        message: String(error),
+      });
+    }
   }
 }
 

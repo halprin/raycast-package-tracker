@@ -4,18 +4,21 @@ import fetch from "node-fetch";
 import { randomUUID } from "node:crypto";
 
 async function updateUpsTracking(trackingNumber: string): Promise<Package[]> {
+  console.log(`Updating tracking for ${trackingNumber}`);
+
   const preferences = getPreferenceValues<Preferences.TrackDeliveries>();
   const clientId = preferences.upsClientId;
   const clientSecret = preferences.upsClientSecret;
 
   if (!clientId || !clientSecret) {
-    return [];
+    console.log(`Unable to update tracking for ${trackingNumber} because clientId or clientSecret is missing`);
+    throw new Error("Client ID or client secret is missing.  Ensure it is filled in this extension's settings.")
   }
 
   console.log("Logging into UPS");
   const loginResponse = await login(clientId, clientSecret);
 
-  console.log(`Updating tracking for ${trackingNumber}`);
+  console.log("Calling UPS tracking");
   const upsTrackingInfo = await track(trackingNumber, loginResponse.access_token);
 
   const packages = convertUpsTrackingToPackages(upsTrackingInfo);
@@ -47,13 +50,14 @@ async function login(clientId: string, clientSecret: string): Promise<LoginRespo
   });
 
   if (!response.ok) {
-    console.log(response.status, response.statusText, await response.text());
-    throw new Error("Failed to login to UPS");
+    console.log("Failed to login to UPS", response.status, response.statusText, await response.text());
+    throw new Error(`Failed to login to UPS with status ${response.statusText}.  Ensure client ID and client secret are correct.`);
   }
 
   const loginResponse = (await response.json()) as LoginResponseBody;
   if (!loginResponse) {
-    throw new Error("Failed to parse UPS login response");
+    console.log("Failed to parse UPS login response")
+    throw new Error("Failed to parse UPS login response.  Please file a bug report.");
   }
 
   return loginResponse;
@@ -100,13 +104,14 @@ async function track(trackingNumber: string, accessToken: string): Promise<UpsTr
   );
 
   if (!response.ok) {
-    console.log(response.status, response.statusText, await response.text());
-    throw new Error(`Failed to get UPS tracking for ${trackingNumber}`);
+    console.log("Failed to get UPS tracking", response.status, response.statusText, await response.text());
+    throw new Error(`Failed to get UPS tracking with status ${response.statusText}.`);
   }
 
   const trackingResponse = (await response.json()) as UpsTrackingInfo;
   if (!trackingResponse) {
-    throw new Error(`Failed to parse UPS track response for ${trackingNumber}`);
+    console.log("Failed to parse UPS login response")
+    throw new Error("Failed to parse UPS track response.  Please file a bug report.");
   }
 
   return trackingResponse;
