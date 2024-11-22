@@ -40,7 +40,7 @@ export default function TrackDeliveriesCommand() {
       return;
     }
 
-    setTrackingIsLoading(true)
+    setTrackingIsLoading(true);
     refreshTracking(tracking, packages, setPackages, setTrackingIsLoading);
   }, [tracking]);
 
@@ -90,8 +90,9 @@ export default function TrackDeliveriesCommand() {
 async function refreshTracking(
   tracking: Track[],
   packages: PackageMap,
-  setPackages: (value: (((prevState: PackageMap) => PackageMap) | PackageMap)) => void,
-  setTrackingIsLoading: (value: (((prevState: boolean) => boolean) | boolean)) => void) {
+  setPackages: (value: ((prevState: PackageMap) => PackageMap) | PackageMap) => void,
+  setTrackingIsLoading: (value: ((prevState: boolean) => boolean) | boolean) => void,
+) {
   const now = new Date();
 
   for (const track of tracking.filter((track) => !track.debug)) {
