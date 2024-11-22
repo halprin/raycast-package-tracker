@@ -12,7 +12,7 @@ async function updateUpsTracking(trackingNumber: string): Promise<Package[]> {
 
   if (!clientId || !clientSecret) {
     console.log(`Unable to update tracking for ${trackingNumber} because clientId or clientSecret is missing`);
-    throw new Error("Client ID or client secret is missing.  Ensure it is filled in this extension's settings.")
+    throw new Error("Client ID or client secret is missing.  Ensure it is filled in this extension's settings.");
   }
 
   console.log("Logging into UPS");
@@ -51,12 +51,14 @@ async function login(clientId: string, clientSecret: string): Promise<LoginRespo
 
   if (!response.ok) {
     console.log("Failed to login to UPS", response.status, response.statusText, await response.text());
-    throw new Error(`Failed to login to UPS with status ${response.statusText}.  Ensure client ID and client secret are correct.`);
+    throw new Error(
+      `Failed to login to UPS with status ${response.statusText}.  Ensure client ID and client secret are correct.`,
+    );
   }
 
   const loginResponse = (await response.json()) as LoginResponseBody;
   if (!loginResponse) {
-    console.log("Failed to parse UPS login response")
+    console.log("Failed to parse UPS login response");
     throw new Error("Failed to parse UPS login response.  Please file a bug report.");
   }
 
@@ -110,7 +112,7 @@ async function track(trackingNumber: string, accessToken: string): Promise<UpsTr
 
   const trackingResponse = (await response.json()) as UpsTrackingInfo;
   if (!trackingResponse) {
-    console.log("Failed to parse UPS login response")
+    console.log("Failed to parse UPS login response");
     throw new Error("Failed to parse UPS track response.  Please file a bug report.");
   }
 
