@@ -41,7 +41,7 @@ export default function TrackDeliveriesCommand() {
     }
 
     setTrackingIsLoading(true);
-    refreshTracking(deliveries, packages, setPackages, setTrackingIsLoading);
+    refreshTracking(false, deliveries, packages, setPackages, setTrackingIsLoading);
   }, [deliveries]);
 
   return (
@@ -79,6 +79,21 @@ export default function TrackDeliveriesCommand() {
                 onAction={() => deleteTracking(item.id, deliveries, setDeliveries)}
               />
               <TrackNewDeliveryAction deliveries={deliveries} setDeliveries={setDeliveries} isLoading={isLoading} />
+              <Action
+                title="Refresh All"
+                icon={Icon.RotateClockwise}
+                shortcut={Keyboard.Shortcut.Common.Refresh}
+                style={Action.Style.Regular}
+                onAction={() => {
+                  if (!deliveries || !packages) {
+                    // don't do anything until both deliveries and packages are initialized
+                    return;
+                  }
+
+                  setTrackingIsLoading(true);
+                  refreshTracking(true, deliveries, packages, setPackages, setTrackingIsLoading);
+                }}
+              />
             </ActionPanel>
           }
         />
@@ -88,6 +103,7 @@ export default function TrackDeliveriesCommand() {
 }
 
 async function refreshTracking(
+  forceRefresh: boolean,
   tracking: Delivery[],
   packages: PackageMap,
   setPackages: (value: ((prevState: PackageMap) => PackageMap) | PackageMap) => void,
@@ -104,6 +120,7 @@ async function refreshTracking(
     const currentTrackPackages = packages[track.id];
 
     if (
+      !forceRefresh &&
       currentTrackPackages &&
       currentTrackPackages.lastUpdated &&
       now.getTime() - currentTrackPackages.lastUpdated.getTime() <= 30 * 60 * 1000
