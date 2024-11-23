@@ -61,6 +61,20 @@
       "description": "The client secret for your app in the UPS developer portal",
       "type": "password",
       "required": false
+    },
+    {
+      "name": "fedexApiKey",
+      "title": "FedEx API Key",
+      "description": "The API key for your project in the FedEx developer portal",
+      "type": "password",
+      "required": false
+    },
+    {
+      "name": "fedexSecretKey",
+      "title": "FedEx Secret Key",
+      "description": "The secret key for your project in the FedEx developer portal",
+      "type": "password",
+      "required": false
     }
   ],
   "dependencies": {
