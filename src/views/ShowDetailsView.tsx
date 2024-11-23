@@ -8,8 +8,6 @@ export default function ShowDetailsView({ delivery, packages }: { delivery: Deli
   
 ${packages.map((aPackage, index) => markdownForPackage(aPackage, index)).reduce((firstValue, secondValue) => `${firstValue}\n${secondValue}`)}`;
 
-  console.log(markdown);
-
   return (
     <Detail
       navigationTitle={delivery.name}
