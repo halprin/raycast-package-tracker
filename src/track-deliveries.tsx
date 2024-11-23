@@ -74,7 +74,7 @@ export default function TrackDeliveriesCommand() {
               <Action.Push
                 title="Show Details"
                 icon={Icon.MagnifyingGlass}
-                target={<ShowDetailsView delivery={delivery} packages={packages[delivery.id]} />}
+                target={<ShowDetailsView delivery={delivery} packages={packages[delivery.id].packages} />}
               />
               <Action
                 title="Delete Delivery"

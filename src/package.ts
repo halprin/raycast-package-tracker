@@ -12,9 +12,11 @@ export interface Package {
   activity: Activity[];
 }
 
-export interface PackageMapValue {
-  packages: Package[];
-  lastUpdated?: Date;
+export interface PackageMap {
+  [key: string]: {
+    packages: Package[];
+    lastUpdated?: Date;
+  };
 }
 
 export function deliveryIcon(packages?: Package[]): Icon {
@@ -119,8 +121,4 @@ export function calculateDayDifference(deliverDate: Date): number {
   }
 
   return dayDifference;
-}
-
-export interface PackageMap {
-  [key: string]: PackageMapValue;
 }

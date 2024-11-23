@@ -1,11 +1,14 @@
 import { Detail } from "@raycast/api";
 import { Delivery } from "../delivery";
-import { deliveryIcon, deliveryStatus, getPackageWithEarliestDeliveryDate, PackageMapValue } from "../package";
+import { deliveryIcon, deliveryStatus, getPackageWithEarliestDeliveryDate, Package } from "../package";
 import providers from "../providers";
 
-export default function ShowDetailsView({ delivery, packages }: { delivery: Delivery; packages: PackageMapValue }) {
+export default function ShowDetailsView({ delivery, packages }: { delivery: Delivery; packages: Package[] }) {
   const markdown = `# ${delivery.name}
-  lol`;
+  
+${packages.map((aPackage, index) => markdownForPackage(aPackage, index)).reduce((firstValue, secondValue) => `${firstValue}\n${secondValue}`)}`;
+
+  console.log(markdown);
 
   return (
     <Detail
@@ -21,15 +24,23 @@ export default function ShowDetailsView({ delivery, packages }: { delivery: Deli
             }}
           />
           <Detail.Metadata.Label title="Tracking Number" text={delivery.trackingNumber} />
-          <Detail.Metadata.Label title="Delivery Date" text={getPackageWithEarliestDeliveryDate(packages.packages).deliveryDate?.toDateString() ?? "Unknown"} />
+          <Detail.Metadata.Label title="Status" text={deliveryStatus(packages)} icon={deliveryIcon(packages)} />
           <Detail.Metadata.Label
-            title="Status"
-            text={deliveryStatus(packages.packages)}
-            icon={deliveryIcon(packages.packages)}
+            title="Delivery Date"
+            text={getPackageWithEarliestDeliveryDate(packages).deliveryDate?.toDateString() ?? "Unknown"}
           />
-          <Detail.Metadata.Label title="Number of Packages" text={packages.packages.length.toString()} />
+          <Detail.Metadata.Label title="Number of Packages" text={packages.length.toString()} />
         </Detail.Metadata>
       }
     />
   );
+
+  function markdownForPackage(aPackage: Package, index: number): string {
+    return `## Package ${index + 1}
+    
+${aPackage.delivered ? "Delivered!" : "Not delivered."}
+
+Delivery Date: ${aPackage.deliveryDate?.toDateString() ?? "Unknown"}.
+`;
+  }
 }
