@@ -53,30 +53,30 @@ export default function TrackDeliveriesCommand() {
         </ActionPanel>
       }
     >
-      {sortTracking(deliveries ?? [], packages).map((item) => (
+      {sortTracking(deliveries ?? [], packages).map((delivery) => (
         <List.Item
-          key={item.id}
-          id={item.id}
-          icon={deliveryIcon(packages[item.id]?.packages)}
-          title={item.name}
-          subtitle={item.trackingNumber}
+          key={delivery.id}
+          id={delivery.id}
+          icon={deliveryIcon(packages[delivery.id]?.packages)}
+          title={delivery.name}
+          subtitle={delivery.trackingNumber}
           accessories={[
-            { text: deliveryAccessory(packages[item.id]?.packages) },
-            { text: { value: providers.get(item.carrier)?.name, color: providers.get(item.carrier)?.color } },
+            { text: deliveryAccessory(packages[delivery.id]?.packages) },
+            { text: { value: providers.get(delivery.carrier)?.name, color: providers.get(delivery.carrier)?.color } },
           ]}
           actions={
             <ActionPanel>
               <Action.Push
                 title="Show Details"
                 icon={Icon.MagnifyingGlass}
-                target={<Detail markdown={`# ${item.name}`} />}
+                target={<Detail markdown={`# ${delivery.name}`} />}
               />
               <Action
                 title="Delete Delivery"
                 icon={Icon.Trash}
                 shortcut={Keyboard.Shortcut.Common.Remove}
                 style={Action.Style.Destructive}
-                onAction={() => deleteTracking(item.id, deliveries, setDeliveries)}
+                onAction={() => deleteTracking(delivery.id, deliveries, setDeliveries)}
               />
               <TrackNewDeliveryAction deliveries={deliveries} setDeliveries={setDeliveries} isLoading={isLoading} />
               <Action
