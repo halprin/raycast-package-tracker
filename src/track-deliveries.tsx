@@ -24,6 +24,7 @@ import { useCachedState, useLocalStorage } from "@raycast/utils";
 import { useEffect, useState } from "react";
 import TrackNewDeliveryAction from "./views/TrackNewDeliveryAction";
 import ShowDetailsView from "./views/ShowDetailsView";
+import EditDeliveryView from "./views/EditDeliveryView";
 
 export default function TrackDeliveriesCommand() {
   const {
@@ -75,6 +76,20 @@ export default function TrackDeliveriesCommand() {
                 title="Show Details"
                 icon={Icon.MagnifyingGlass}
                 target={<ShowDetailsView delivery={delivery} packages={packages[delivery.id]?.packages ?? []} />}
+              />
+              <Action.Push
+                title="Edit Delivery"
+                icon={Icon.Pencil}
+                shortcut={Keyboard.Shortcut.Common.Edit}
+                target={
+                  <EditDeliveryView
+                    delivery={delivery}
+                    deliveries={deliveries ?? []}
+                    setDeliveries={setDeliveries}
+                    setPackages={setPackages}
+                    isLoading={isLoading}
+                  />
+                }
               />
               <Action
                 title="Delete Delivery"
