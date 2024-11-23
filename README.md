@@ -1,6 +1,6 @@
 # Delivery Tracker
 
-[Original repository](https://github.com/halprin/raycast-package-tracker).
+[Original repository](https://github.com/halprin/raycast-delivery-tracker).
 
 Tracks deliveries, packages, and parcels in Raycast.  Remembers your deliveries, so you can keep watch as they make
 their way to you.
@@ -29,7 +29,7 @@ you will need to contact their [API support](mailto:APISupport@usps.gov) to add 
 ## Contributing
 
 Feel free to file an issue or fork and PR on the
-[original repository](https://github.com/halprin/raycast-package-tracker) or through the
+[original repository](https://github.com/halprin/raycast-delivery-tracker) or through the
 [main extension repository](https://github.com/raycast/extensions) workflow.
 
 If you are adding support for a new carrier, you can take inspiration from the [existing carriers](./src/providers).
