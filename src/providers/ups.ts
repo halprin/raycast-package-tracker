@@ -15,31 +15,10 @@ async function updateUpsTracking(trackingNumber: string): Promise<Package[]> {
 
   if (!clientId || !clientSecret) {
     console.log(`Unable to update tracking for ${trackingNumber} because clientId or clientSecret is missing`);
-    throw new Error("Client ID or client secret is missing.  Ensure it is filled in this extension's settings.");
+    throw new Error("UPS client ID or client secret is missing.  Ensure it is filled in this extension's settings.");
   }
 
-  let loginResponse: LoginResponseBody;
-  if (!cache.has(cacheKey)) {
-    console.log("Logging into UPS");
-    loginResponse = await login(clientId, clientSecret);
-
-    cache.set(cacheKey, JSON.stringify(loginResponse));
-  } else {
-    loginResponse = JSON.parse(cache.get(cacheKey) ?? "{}");
-
-    if (Number(loginResponse.issued_at) + Number(loginResponse.expires_in) * 1000 < new Date().getTime() + 30 * 1000) {
-      console.log(
-        Number(loginResponse.issued_at) + Number(loginResponse.expires_in) * 1000,
-        ">",
-        new Date().getTime() + 30 * 1000,
-      );
-      // we are less than 30 seconds form the access token expiring
-      console.log("Access key expired; logging into UPS");
-      loginResponse = await login(clientId, clientSecret);
-
-      cache.set(cacheKey, JSON.stringify(loginResponse));
-    }
-  }
+  const loginResponse = await loginWithCachedData(clientId, clientSecret);
 
   console.log("Calling UPS tracking");
   const upsTrackingInfo = await track(trackingNumber, loginResponse.access_token);
@@ -58,6 +37,30 @@ interface LoginResponseBody {
   access_token: string;
   expires_in: string;
   status: string;
+}
+
+async function loginWithCachedData(clientId: string, clientSecret: string): Promise<LoginResponseBody> {
+
+  let loginResponse: LoginResponseBody;
+
+  if (!cache.has(cacheKey)) {
+    console.log("Logging into UPS");
+    loginResponse = await login(clientId, clientSecret);
+
+    cache.set(cacheKey, JSON.stringify(loginResponse));
+  } else {
+    loginResponse = JSON.parse(cache.get(cacheKey) ?? "{}");
+
+    if (Number(loginResponse.issued_at) + Number(loginResponse.expires_in) * 1000 < new Date().getTime() + 30 * 1000) {
+      // we are less than 30 seconds form the access token expiring
+      console.log("Access key expired; logging into UPS");
+      loginResponse = await login(clientId, clientSecret);
+
+      cache.set(cacheKey, JSON.stringify(loginResponse));
+    }
+  }
+
+  return loginResponse;
 }
 
 async function login(clientId: string, clientSecret: string): Promise<LoginResponseBody> {
