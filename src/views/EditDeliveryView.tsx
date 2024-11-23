@@ -49,6 +49,11 @@ export default function EditDeliveryView({
 
       pop();
     },
+    initialValues: {
+      name: delivery.name,
+      carrier: delivery.carrier,
+      trackingNumber: delivery.trackingNumber,
+    },
     validation: {
       name: FormValidation.Required,
       carrier: FormValidation.Required,
@@ -69,10 +74,9 @@ export default function EditDeliveryView({
       <Form.TextField
         title="Name"
         placeholder="Name for the delivery"
-        defaultValue={delivery.name}
         {...itemProps.name}
       />
-      <Form.Dropdown title="Carrier" defaultValue={delivery.carrier} {...itemProps.carrier}>
+      <Form.Dropdown title="Carrier" {...itemProps.carrier}>
         {Array.from(providers.values()).map((provider) => (
           <Form.Dropdown.Item key={provider.id} value={provider.id} title={provider.name} />
         ))}
@@ -80,7 +84,6 @@ export default function EditDeliveryView({
       <Form.TextField
         title="Tracking number"
         placeholder="Tracking number from the carrier"
-        defaultValue={delivery.trackingNumber}
         {...itemProps.trackingNumber}
       />
     </Form>
