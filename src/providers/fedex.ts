@@ -37,7 +37,6 @@ interface LoginResponseBody {
 }
 
 async function loginWithCachedData(apiKey: string, secretKey: string): Promise<LoginResponseBody> {
-
   let loginResponse: LoginResponseBody;
 
   if (!cache.has(cacheKey)) {
@@ -93,43 +92,48 @@ async function login(apiKey: string, secretKey: string): Promise<LoginResponseBo
 
 interface FedexTrackingInfo {
   output: {
-    completeTrackResults: [{
-      trackingNumber: string;
-      trackResults: [{
-        trackingNumberInfo: {
-          trackingNumber: string,
-        },
-        latestStatusDetail: {
-          code: string,
-        },
-        dateAndTimes: [{
-          type: string,
-          dateTime: string,
-        }],
-      }]
-    }],
-  },
+    completeTrackResults: [
+      {
+        trackingNumber: string;
+        trackResults: [
+          {
+            trackingNumberInfo: {
+              trackingNumber: string;
+            };
+            latestStatusDetail: {
+              code: string;
+            };
+            dateAndTimes: [
+              {
+                type: string;
+                dateTime: string;
+              },
+            ];
+          },
+        ];
+      },
+    ];
+  };
 }
 
 async function track(trackingNumber: string, accessToken: string): Promise<FedexTrackingInfo> {
-  const response = await fetch(
-    `https://apis-sandbox.fedex.com/track/v1/trackingnumbers`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + accessToken,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        includeDetailedScans: true,
-        trackingInfo: [{
+  const response = await fetch(`https://apis-sandbox.fedex.com/track/v1/trackingnumbers`, {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + accessToken,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      includeDetailedScans: true,
+      trackingInfo: [
+        {
           trackingNumberInfo: {
             trackingNumber: trackingNumber,
           },
-        }],
-      }),
-    },
-  );
+        },
+      ],
+    }),
+  });
 
   if (!response.ok) {
     console.log("Failed to get FedEx tracking", response.status, response.statusText, await response.text());
@@ -146,18 +150,24 @@ async function track(trackingNumber: string, accessToken: string): Promise<Fedex
 }
 
 function convertUpsTrackingToPackages(fedexTrackingInfo: FedexTrackingInfo): Package[] {
-
-  return fedexTrackingInfo.output.completeTrackResults.flatMap(results => results.trackResults)
-    .map(aPackage => {
-      const deliveryDate = aPackage.dateAndTimes.find(dateAndTime => dateAndTime.type === "ACTUAL_DELIVERY")?.dateTime;
-      const estimatedDeliveryDate = aPackage.dateAndTimes.find(dateAndTime => dateAndTime.type === "ESTIMATED_DELIVERY")?.dateTime;
-      const appointmentDeliveryDate = aPackage.dateAndTimes.find(dateAndTime => dateAndTime.type === "APPOINTMENT_DELIVERY")?.dateTime;
+  return fedexTrackingInfo.output.completeTrackResults
+    .flatMap((results) => results.trackResults)
+    .map((aPackage) => {
+      const deliveryDate = aPackage.dateAndTimes.find(
+        (dateAndTime) => dateAndTime.type === "ACTUAL_DELIVERY",
+      )?.dateTime;
+      const estimatedDeliveryDate = aPackage.dateAndTimes.find(
+        (dateAndTime) => dateAndTime.type === "ESTIMATED_DELIVERY",
+      )?.dateTime;
+      const appointmentDeliveryDate = aPackage.dateAndTimes.find(
+        (dateAndTime) => dateAndTime.type === "APPOINTMENT_DELIVERY",
+      )?.dateTime;
 
       return {
-              delivered: aPackage.latestStatusDetail.code === "DL",
-              deliveryDate: convertFedexDateToDate(deliveryDate || estimatedDeliveryDate || appointmentDeliveryDate),
-              activity: [],
-            };
+        delivered: aPackage.latestStatusDetail.code === "DL",
+        deliveryDate: convertFedexDateToDate(deliveryDate || estimatedDeliveryDate || appointmentDeliveryDate),
+        activity: [],
+      };
     });
 }
 

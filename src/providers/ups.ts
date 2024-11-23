@@ -40,7 +40,6 @@ interface LoginResponseBody {
 }
 
 async function loginWithCachedData(clientId: string, clientSecret: string): Promise<LoginResponseBody> {
-
   let loginResponse: LoginResponseBody;
 
   if (!cache.has(cacheKey)) {
