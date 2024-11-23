@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 
 const cache = new Cache();
 const cacheKey = "uspsLogin";
+const host = "api.usps.com";
 
 async function updateUspsTracking(trackingNumber: string): Promise<Package[]> {
   console.log(`Updating tracking for ${trackingNumber}`);
@@ -65,7 +66,7 @@ async function loginWithCachedData(consumerKey: string, consumerSecret: string):
 }
 
 async function login(consumerKey: string, consumerSecret: string): Promise<LoginResponseBody> {
-  const response = await fetch("https://api.usps.com/oauth2/v3/token", {
+  const response = await fetch(`https://${host}/oauth2/v3/token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -121,7 +122,7 @@ interface UspsTrackingInfo {
 
 async function track(trackingNumber: string, accessToken: string): Promise<UspsTrackingInfo> {
   // const response = await fetch(
-  //   `https://api.usps.com/tracking/v3/tracking/${trackingNumber}?expand=SUMMARY`,
+  //   `https://${host}/tracking/v3/tracking/${trackingNumber}?expand=SUMMARY`,
   //   {
   //     method: "GET",
   //     headers: {

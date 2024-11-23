@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 
 const cache = new Cache();
 const cacheKey = "upsLogin";
+const host = "onlinetools.ups.com";
 
 async function updateUpsTracking(trackingNumber: string): Promise<Package[]> {
   console.log(`Updating tracking for ${trackingNumber}`);
@@ -63,7 +64,7 @@ async function loginWithCachedData(clientId: string, clientSecret: string): Prom
 }
 
 async function login(clientId: string, clientSecret: string): Promise<LoginResponseBody> {
-  const response = await fetch("https://wwwcie.ups.com/security/v1/oauth/token", {
+  const response = await fetch(`https://${host}/security/v1/oauth/token`, {
     method: "POST",
     headers: {
       Authorization: "Basic " + btoa(clientId + ":" + clientSecret),
@@ -118,7 +119,7 @@ interface UpsTrackingInfo {
 
 async function track(trackingNumber: string, accessToken: string): Promise<UpsTrackingInfo> {
   const response = await fetch(
-    `https://wwwcie.ups.com/api/track/v1/details/${trackingNumber}?locale=en_US&returnSignature=false`,
+    `https://${host}/api/track/v1/details/${trackingNumber}?locale=en_US&returnSignature=false`,
     {
       method: "GET",
       headers: {

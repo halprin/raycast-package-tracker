@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 
 const cache = new Cache();
 const cacheKey = "fedexLogin";
+const host = "apis.fedex.com";
 
 async function updateFedexTracking(trackingNumber: string): Promise<Package[]> {
   console.log(`Updating tracking for ${trackingNumber}`);
@@ -62,7 +63,7 @@ async function loginWithCachedData(apiKey: string, secretKey: string): Promise<L
 }
 
 async function login(apiKey: string, secretKey: string): Promise<LoginResponseBody> {
-  const response = await fetch("https://apis-sandbox.fedex.com/oauth/token", {
+  const response = await fetch(`https://${host}/oauth/token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -117,7 +118,7 @@ interface FedexTrackingInfo {
 }
 
 async function track(trackingNumber: string, accessToken: string): Promise<FedexTrackingInfo> {
-  const response = await fetch(`https://apis-sandbox.fedex.com/track/v1/trackingnumbers`, {
+  const response = await fetch(`https://${host}/track/v1/trackingnumbers`, {
     method: "POST",
     headers: {
       Authorization: "Bearer " + accessToken,
