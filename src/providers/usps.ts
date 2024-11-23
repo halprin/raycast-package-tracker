@@ -14,7 +14,7 @@ async function updateUspsTracking(trackingNumber: string): Promise<Package[]> {
 
   if (!consumerKey || !consumerSecret) {
     console.log(`Unable to update tracking for ${trackingNumber} because consumerKey or consumerSecret is missing`);
-    throw new Error("USPS consumer key or consumer secret is missing.  Ensure it is filled in this extension's settings.");
+    throw new Error("USPS consumer key or consumer secret is missing.  Ensure they are filled in this extension's settings.");
   }
 
   const loginResponse = await loginWithCachedData(consumerKey, consumerSecret);

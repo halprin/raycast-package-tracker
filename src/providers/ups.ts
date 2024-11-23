@@ -15,7 +15,7 @@ async function updateUpsTracking(trackingNumber: string): Promise<Package[]> {
 
   if (!clientId || !clientSecret) {
     console.log(`Unable to update tracking for ${trackingNumber} because clientId or clientSecret is missing`);
-    throw new Error("UPS client ID or client secret is missing.  Ensure it is filled in this extension's settings.");
+    throw new Error("UPS client ID or client secret is missing.  Ensure they are filled in this extension's settings.");
   }
 
   const loginResponse = await loginWithCachedData(clientId, clientSecret);
