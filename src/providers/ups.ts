@@ -1,7 +1,10 @@
 import { Package } from "../package";
-import { getPreferenceValues } from "@raycast/api";
+import { getPreferenceValues, Cache } from "@raycast/api";
 import fetch from "node-fetch";
 import { randomUUID } from "node:crypto";
+
+const cache = new Cache();
+const cacheKey = "upsLogin";
 
 async function updateUpsTracking(trackingNumber: string): Promise<Package[]> {
   console.log(`Updating tracking for ${trackingNumber}`);
@@ -15,8 +18,28 @@ async function updateUpsTracking(trackingNumber: string): Promise<Package[]> {
     throw new Error("Client ID or client secret is missing.  Ensure it is filled in this extension's settings.");
   }
 
-  console.log("Logging into UPS");
-  const loginResponse = await login(clientId, clientSecret);
+  let loginResponse: LoginResponseBody;
+  if (!cache.has(cacheKey)) {
+    console.log("Logging into UPS");
+    loginResponse = await login(clientId, clientSecret);
+
+    cache.set(cacheKey, JSON.stringify(loginResponse));
+  } else {
+    loginResponse = JSON.parse(cache.get(cacheKey) ?? "{}");
+
+    if (Number(loginResponse.issued_at) + Number(loginResponse.expires_in) * 1000 < new Date().getTime() + 30 * 1000) {
+      console.log(
+        Number(loginResponse.issued_at) + Number(loginResponse.expires_in) * 1000,
+        ">",
+        new Date().getTime() + 30 * 1000,
+      );
+      // we are less than 30 seconds form the access token expiring
+      console.log("Access key expired; logging into UPS");
+      loginResponse = await login(clientId, clientSecret);
+
+      cache.set(cacheKey, JSON.stringify(loginResponse));
+    }
+  }
 
   console.log("Calling UPS tracking");
   const upsTrackingInfo = await track(trackingNumber, loginResponse.access_token);

@@ -23,13 +23,13 @@ export default function TrackNewDeliveryView({
 
   const { handleSubmit, itemProps } = useForm<AddDeliveryForm>({
     onSubmit: async (deliveryForm) => {
-      const track: Delivery = {
+      const delivery: Delivery = {
         id: randomUUID().toString(),
         name: deliveryForm.name,
         trackingNumber: deliveryForm.trackingNumber,
         carrier: deliveryForm.carrier,
       };
-      await setDeliveries((deliveries || []).concat(track));
+      await setDeliveries((deliveries || []).concat(delivery));
 
       await showToast({
         style: Toast.Style.Success,
