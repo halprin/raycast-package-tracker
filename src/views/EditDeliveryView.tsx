@@ -71,11 +71,7 @@ export default function EditDeliveryView({
       }
     >
       <Form.Description text="Edit the details of the delivery." />
-      <Form.TextField
-        title="Name"
-        placeholder="Name for the delivery"
-        {...itemProps.name}
-      />
+      <Form.TextField title="Name" placeholder="Name for the delivery" {...itemProps.name} />
       <Form.Dropdown title="Carrier" {...itemProps.carrier}>
         {Array.from(providers.values()).map((provider) => (
           <Form.Dropdown.Item key={provider.id} value={provider.id} title={provider.name} />
