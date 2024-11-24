@@ -1,7 +1,7 @@
 import { Detail } from "@raycast/api";
 import { Delivery } from "../delivery";
 import { deliveryIcon, deliveryStatus, getPackageWithEarliestDeliveryDate, Package } from "../package";
-import providers from "../providers";
+import carriers from "../carriers";
 
 export default function ShowDetailsView({ delivery, packages }: { delivery: Delivery; packages: Package[] }) {
   const markdown = `# ${delivery.name}
@@ -17,8 +17,8 @@ ${packages.map((aPackage, index) => markdownForPackage(aPackage, index)).reduce(
           <Detail.Metadata.Label
             title="Carrier"
             text={{
-              value: providers.get(delivery.carrier)?.name ?? "Unknown",
-              color: providers.get(delivery.carrier)?.color,
+              value: carriers.get(delivery.carrier)?.name ?? "Unknown",
+              color: carriers.get(delivery.carrier)?.color,
             }}
           />
           <Detail.Metadata.Label title="Tracking Number" text={delivery.trackingNumber} />

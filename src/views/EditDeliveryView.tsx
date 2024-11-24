@@ -1,5 +1,5 @@
 import { Form, ActionPanel, Action, showToast, Toast, useNavigation } from "@raycast/api";
-import providers from "../providers";
+import carriers from "../carriers";
 import { FormValidation, useForm } from "@raycast/utils";
 import { Delivery } from "../delivery";
 import { PackageMap } from "../package";
@@ -73,8 +73,8 @@ export default function EditDeliveryView({
       <Form.Description text="Edit the details of the delivery." />
       <Form.TextField title="Name" placeholder="Name for the delivery" {...itemProps.name} />
       <Form.Dropdown title="Carrier" {...itemProps.carrier}>
-        {Array.from(providers.values()).map((provider) => (
-          <Form.Dropdown.Item key={provider.id} value={provider.id} title={provider.name} />
+        {Array.from(carriers.values()).map((carrier) => (
+          <Form.Dropdown.Item key={carrier.id} value={carrier.id} title={carrier.name} />
         ))}
       </Form.Dropdown>
       <Form.TextField

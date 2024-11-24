@@ -1,17 +1,17 @@
 import { Color } from "@raycast/api";
 import { Package } from "./package";
-import updateUspsTracking from "./providers/usps";
-import updateUpsTracking from "./providers/ups";
-import updateFedexTracking from "./providers/fedex";
+import updateUspsTracking from "./carriers/usps";
+import updateUpsTracking from "./carriers/ups";
+import updateFedexTracking from "./carriers/fedex";
 
-interface Provider {
+interface Carrier {
   id: string;
   name: string;
   color: Color;
   updateTracking: (trackingNumber: string) => Promise<Package[]>;
 }
 
-const providers: Provider[] = [
+const carriers: Carrier[] = [
   {
     id: "usps",
     name: "USPS",
@@ -32,4 +32,4 @@ const providers: Provider[] = [
   },
 ];
 
-export default new Map(providers.map((provider) => [provider.id, provider]));
+export default new Map(carriers.map((carrier) => [carrier.id, carrier]));

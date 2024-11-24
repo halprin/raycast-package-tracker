@@ -11,7 +11,7 @@ import {
   Alert,
 } from "@raycast/api";
 import { debugDeliveries, debugPackages } from "./debugData";
-import providers from "./providers";
+import carriers from "./carriers";
 import {
   calculateDayDifference,
   deliveryIcon,
@@ -77,7 +77,7 @@ export default function TrackDeliveriesCommand() {
             subtitle={delivery.trackingNumber}
             accessories={[
               { text: deliveryStatus(packages[delivery.id]?.packages) },
-              { text: { value: providers.get(delivery.carrier)?.name, color: providers.get(delivery.carrier)?.color } },
+              { text: { value: carriers.get(delivery.carrier)?.name, color: carriers.get(delivery.carrier)?.color } },
             ]}
             actions={
               <ActionPanel>
@@ -134,20 +134,20 @@ export default function TrackDeliveriesCommand() {
 
 async function refreshTracking(
   forceRefresh: boolean,
-  tracking: Delivery[],
+  deliveries: Delivery[],
   packages: PackageMap,
   setPackages: (value: ((prevState: PackageMap) => PackageMap) | PackageMap) => void,
   setTrackingIsLoading: (value: ((prevState: boolean) => boolean) | boolean) => void,
 ) {
   const now = new Date();
 
-  for (const track of tracking.filter((track) => !track.debug)) {
-    const provider = providers.get(track.carrier);
-    if (!provider) {
+  for (const delivery of deliveries.filter((delivery) => !delivery.debug)) {
+    const carrier = carriers.get(delivery.carrier);
+    if (!carrier) {
       continue;
     }
 
-    const currentTrackPackages = packages[track.id];
+    const currentTrackPackages = packages[delivery.id];
 
     if (
       !forceRefresh &&
@@ -164,10 +164,10 @@ async function refreshTracking(
     }
 
     try {
-      const refreshedPackages = await provider.updateTracking(track.trackingNumber);
+      const refreshedPackages = await carrier.updateTracking(delivery.trackingNumber);
 
       setPackages((packagesMap) => {
-        packagesMap[track.id] = {
+        packagesMap[delivery.id] = {
           packages: refreshedPackages,
           lastUpdated: now,
         };
@@ -176,7 +176,7 @@ async function refreshTracking(
     } catch (error) {
       await showToast({
         style: Toast.Style.Failure,
-        title: `Failed to Update Tracking for ${track.trackingNumber}`,
+        title: `Failed to Update Tracking for ${delivery.trackingNumber}`,
         message: String(error),
       });
     }

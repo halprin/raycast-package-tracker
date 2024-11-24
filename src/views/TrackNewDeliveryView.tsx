@@ -1,5 +1,5 @@
 import { Form, ActionPanel, Action, showToast, Toast, useNavigation } from "@raycast/api";
-import providers from "../providers";
+import carriers from "../carriers";
 import { FormValidation, useForm } from "@raycast/utils";
 import { Delivery } from "../delivery";
 import { randomUUID } from "node:crypto";
@@ -58,8 +58,8 @@ export default function TrackNewDeliveryView({
       <Form.Description text="Fill in the details of the delivery you want to track." />
       <Form.TextField title="Name" placeholder="Name for the delivery" {...itemProps.name} />
       <Form.Dropdown title="Carrier" {...itemProps.carrier}>
-        {Array.from(providers.values()).map((provider) => (
-          <Form.Dropdown.Item key={provider.id} value={provider.id} title={provider.name} />
+        {Array.from(carriers.values()).map((carrier) => (
+          <Form.Dropdown.Item key={carrier.id} value={carrier.id} title={carrier.name} />
         ))}
       </Form.Dropdown>
       <Form.TextField

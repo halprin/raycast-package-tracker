@@ -53,5 +53,5 @@ Feel free to file an issue or fork and PR on the
 [original repository](https://github.com/halprin/raycast-delivery-tracker) or through the
 [main extension repository](https://github.com/raycast/extensions) workflow.
 
-If you are adding support for a new carrier, you can take inspiration from the [existing carriers](./src/providers).
+If you are adding support for a new carrier, you can take inspiration from the [existing carriers](./src/carriers).
 Please update the documentation here on how one signs-up for the carrier and gets any API keys.
