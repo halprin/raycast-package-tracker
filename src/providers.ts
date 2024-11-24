@@ -21,7 +21,7 @@ const providers: Provider[] = [
   {
     id: "ups",
     name: "UPS",
-    color: Color.Yellow,
+    color: Color.Orange,
     updateTracking: updateUpsTracking,
   },
   {
