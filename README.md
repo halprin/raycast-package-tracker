@@ -5,8 +5,8 @@
 Tracks deliveries, packages, and parcels in Raycast.  Remembers your deliveries, so you can keep watch as they make
 their way to you.
 
-This extension does not use a single third-party tracking service.  It directly integrates with each supported carrier,
-which allows you to be in charge of your privacy.
+This extension does not use a third-party tracking service as a proxy.  It directly integrates with each supported
+carrier, which allows you to be in charge of your privacy.
 
 ## Supported Carriers
 
