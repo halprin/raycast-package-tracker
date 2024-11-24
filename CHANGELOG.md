@@ -1,3 +1,8 @@
-# Package Tracker Changelog
+# Delivery Tracker Changelog
 
-## [Initial Version] - {PR_MERGE_DATE}
+## [Initial Release] - {PR_MERGE_DATE}
+
+The initial release.  Has support for...
+- USPS.
+- UPS.
+- FedEx.
