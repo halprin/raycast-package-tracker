@@ -59,65 +59,69 @@ export default function TrackDeliveriesCommand() {
         </ActionPanel>
       }
     >
-      {sortTracking(deliveries ?? [], packages).map((delivery) => (
-        <List.Item
-          key={delivery.id}
-          id={delivery.id}
-          icon={deliveryIcon(packages[delivery.id]?.packages)}
-          title={delivery.name}
-          subtitle={delivery.trackingNumber}
-          accessories={[
-            { text: deliveryStatus(packages[delivery.id]?.packages) },
-            { text: { value: providers.get(delivery.carrier)?.name, color: providers.get(delivery.carrier)?.color } },
-          ]}
-          actions={
-            <ActionPanel>
-              <Action.Push
-                title="Show Details"
-                icon={Icon.MagnifyingGlass}
-                target={<ShowDetailsView delivery={delivery} packages={packages[delivery.id]?.packages ?? []} />}
-              />
-              <Action.Push
-                title="Edit Delivery"
-                icon={Icon.Pencil}
-                shortcut={Keyboard.Shortcut.Common.Edit}
-                target={
-                  <EditDeliveryView
-                    delivery={delivery}
-                    deliveries={deliveries ?? []}
-                    setDeliveries={setDeliveries}
-                    setPackages={setPackages}
-                    isLoading={isLoading}
-                  />
-                }
-              />
-              <Action
-                title="Delete Delivery"
-                icon={Icon.Trash}
-                shortcut={Keyboard.Shortcut.Common.Remove}
-                style={Action.Style.Destructive}
-                onAction={() => deleteTracking(delivery.id, deliveries, setDeliveries)}
-              />
-              <TrackNewDeliveryAction deliveries={deliveries} setDeliveries={setDeliveries} isLoading={isLoading} />
-              <Action
-                title="Refresh All"
-                icon={Icon.RotateClockwise}
-                shortcut={Keyboard.Shortcut.Common.Refresh}
-                style={Action.Style.Regular}
-                onAction={() => {
-                  if (!deliveries || !packages) {
-                    // don't do anything until both deliveries and packages are initialized
-                    return;
+      {(deliveries ?? []).length === 0 ? (
+        <List.EmptyView icon={"extension-icon.png"} title="No Deliveries" description={"Track a new delivery ⏎, and don't forget to fill in the API keys for the used carriers in the extension settings."} />
+      ) : (
+        sortTracking(deliveries ?? [], packages).map((delivery) => (
+          <List.Item
+            key={delivery.id}
+            id={delivery.id}
+            icon={deliveryIcon(packages[delivery.id]?.packages)}
+            title={delivery.name}
+            subtitle={delivery.trackingNumber}
+            accessories={[
+              { text: deliveryStatus(packages[delivery.id]?.packages) },
+              { text: { value: providers.get(delivery.carrier)?.name, color: providers.get(delivery.carrier)?.color } },
+            ]}
+            actions={
+              <ActionPanel>
+                <Action.Push
+                  title="Show Details"
+                  icon={Icon.MagnifyingGlass}
+                  target={<ShowDetailsView delivery={delivery} packages={packages[delivery.id]?.packages ?? []} />}
+                />
+                <Action.Push
+                  title="Edit Delivery"
+                  icon={Icon.Pencil}
+                  shortcut={Keyboard.Shortcut.Common.Edit}
+                  target={
+                    <EditDeliveryView
+                      delivery={delivery}
+                      deliveries={deliveries ?? []}
+                      setDeliveries={setDeliveries}
+                      setPackages={setPackages}
+                      isLoading={isLoading}
+                    />
                   }
+                />
+                <Action
+                  title="Delete Delivery"
+                  icon={Icon.Trash}
+                  shortcut={Keyboard.Shortcut.Common.Remove}
+                  style={Action.Style.Destructive}
+                  onAction={() => deleteTracking(delivery.id, deliveries, setDeliveries)}
+                />
+                <TrackNewDeliveryAction deliveries={deliveries} setDeliveries={setDeliveries} isLoading={isLoading} />
+                <Action
+                  title="Refresh All"
+                  icon={Icon.RotateClockwise}
+                  shortcut={Keyboard.Shortcut.Common.Refresh}
+                  style={Action.Style.Regular}
+                  onAction={() => {
+                    if (!deliveries || !packages) {
+                      // don't do anything until both deliveries and packages are initialized
+                      return;
+                    }
 
-                  setTrackingIsLoading(true);
-                  refreshTracking(true, deliveries, packages, setPackages, setTrackingIsLoading);
-                }}
-              />
-            </ActionPanel>
-          }
-        />
-      ))}
+                    setTrackingIsLoading(true);
+                    refreshTracking(true, deliveries, packages, setPackages, setTrackingIsLoading);
+                  }}
+                />
+              </ActionPanel>
+            }
+          />
+        ))
+      )}
     </List>
   );
 }
