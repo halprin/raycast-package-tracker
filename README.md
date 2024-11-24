@@ -24,6 +24,17 @@ you will need to contact their [API support](mailto:APISupport@usps.gov) to add 
 
 ### United Parcel Service (UPS)
 
+In the settings, you'll need two things to access the UPS API.
+- Client ID.
+- Client secret.
+
+Navigate to the [UPS Developer Portal](https://developer.ups.com/) and walk through the getting started steps.
+
+The name of the app can be anything and is only for you.  You do not need a callback URL.  Pick the option that you want
+to integrate UPS in your business because you are _not_ representing other users for why you need API credentials.  Make
+sure to add the Tracking API product.  You'll need a shipper account tied to your normal UPS account; UPS will walk you
+through this process if you don't have one yet.
+
 ### Federal Express (FedEx)
 
 ## Contributing
