@@ -60,7 +60,13 @@ export default function TrackDeliveriesCommand() {
       }
     >
       {(deliveries ?? []).length === 0 ? (
-        <List.EmptyView icon={"extension-icon.png"} title="No Deliveries" description={"Track a new delivery ⏎, and don't forget to fill in the API keys for the used carriers in the extension settings."} />
+        <List.EmptyView
+          icon={"extension-icon.png"}
+          title="No Deliveries"
+          description={
+            "Track a new delivery ⏎, and don't forget to fill in the API keys for the used carriers in the extension settings."
+          }
+        />
       ) : (
         sortTracking(deliveries ?? [], packages).map((delivery) => (
           <List.Item
