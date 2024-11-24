@@ -37,6 +37,16 @@ through this process if you don't have one yet.
 
 ### Federal Express (FedEx)
 
+In the settings, you'll need two things to access the FedEx API.
+- API key.
+- Secret key.
+
+Navigate to the [FedEx Developer Portal](https://developer.fedex.com/) and walk through the getting started steps.
+
+Select the track API when creating the API project.  The name of the project can be anything and is only for you.  After
+creating the project, you'll need to subsequently create the production key and use that in this extension.  Do not use
+the test key, or you'll get incorrect tracking information.  The name of the production key name can be anything.
+
 ## Contributing
 
 Feel free to file an issue or fork and PR on the
