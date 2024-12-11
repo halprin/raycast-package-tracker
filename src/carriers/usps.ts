@@ -1,183 +1,66 @@
 import { Package } from "../package";
-import { Cache, getPreferenceValues } from "@raycast/api";
 import fetch from "node-fetch";
-
-const cache = new Cache();
-const cacheKey = "uspsLogin";
-const host = "api.usps.com";
+import { JSDOM } from "jsdom";
+import * as cheerio from "cheerio";
 
 async function updateUspsTracking(trackingNumber: string): Promise<Package[]> {
   console.log(`Updating tracking for ${trackingNumber}`);
 
-  const preferences = getPreferenceValues<Preferences.TrackDeliveries>();
-  const consumerKey = preferences.uspsConsumerKey;
-  const consumerSecret = preferences.uspsConsumerSecret;
-
-  if (!consumerKey || !consumerSecret) {
-    console.log(`Unable to update tracking for ${trackingNumber} because consumerKey or consumerSecret is missing`);
-    throw new Error(
-      "USPS consumer key or consumer secret is missing.  Ensure they are filled in this extension's settings.",
-    );
-  }
-
-  const loginResponse = await loginWithCachedData(consumerKey, consumerSecret);
-
   console.log("Calling USPS tracking");
-  const upsTrackingInfo = await track(trackingNumber, loginResponse.access_token);
-
-  const packages = convertUspsTrackingToPackages(upsTrackingInfo);
+  const aPackage = await track(trackingNumber);
 
   console.log(`Updated tracking for ${trackingNumber}`);
 
-  return packages;
+  return [aPackage];
 }
 
-interface LoginResponseBody {
-  access_token: string;
-  token_type: string;
-  issued_at: number;
-  expires_in: number;
-  status: string;
-  scope: string;
-  client_id: string;
-}
-
-async function loginWithCachedData(consumerKey: string, consumerSecret: string): Promise<LoginResponseBody> {
-  let loginResponse: LoginResponseBody;
-
-  if (!cache.has(cacheKey)) {
-    console.log("Logging into USPS");
-    loginResponse = await login(consumerKey, consumerSecret);
-
-    cache.set(cacheKey, JSON.stringify(loginResponse));
-  } else {
-    loginResponse = JSON.parse(cache.get(cacheKey) ?? "{}");
-
-    if (loginResponse.issued_at + loginResponse.expires_in * 1000 < new Date().getTime() + 30 * 1000) {
-      // we are less than 30 seconds form the access token expiring
-      console.log("Access key expired; logging into USPS");
-      loginResponse = await login(consumerKey, consumerSecret);
-
-      cache.set(cacheKey, JSON.stringify(loginResponse));
-    }
-  }
-
-  return loginResponse;
-}
-
-async function login(consumerKey: string, consumerSecret: string): Promise<LoginResponseBody> {
-  const response = await fetch(`https://${host}/oauth2/v3/token`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-      client_id: consumerKey,
-      client_secret: consumerSecret,
-    }),
-  });
+async function track(trackingNumber: string): Promise<Package> {
+  const url = `https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=${trackingNumber}`;
+  const response = await fetch(url);
 
   if (!response.ok) {
-    console.log("Failed to login to USPS", response.status, response.statusText, await response.text());
-    throw new Error(
-      `Failed to login to USPS with status ${response.statusText}.  Ensure consumer key and consumer secret are correct.`,
-    );
+    console.log("Failed to get USPS tracking", response.status, response.statusText, await response.text());
+    throw new Error(`Failed to get USPS tracking with status ${response.statusText}.`);
   }
 
-  const loginResponse = (await response.json()) as LoginResponseBody;
-  if (!loginResponse) {
-    console.log("Failed to parse USPS login response");
-    throw new Error("Failed to parse USPS login response.  Please file a bug report.");
-  }
+  const initialHtml = await response.text();
 
-  return loginResponse;
-}
+  console.log("here we are");
 
-interface UspsTrackingInfo {
-  trackResponse: {
-    shipment: [
-      {
-        inquiryNumber: string;
-        package: [
-          {
-            trackingNumber: string;
-            deliveryDate: [
-              {
-                type: string;
-                date: string;
-              },
-            ];
-            activity: [object];
-            currentStatus: {
-              description: string;
-              code: string;
-            };
-          },
-        ];
-      },
-    ];
-  };
-}
+  const dom = new JSDOM(initialHtml, {
+    url: url,
+    runScripts: "dangerously",
+  });
 
-async function track(trackingNumber: string, accessToken: string): Promise<UspsTrackingInfo> {
-  // const response = await fetch(
-  //   `https://${host}/tracking/v3/tracking/${trackingNumber}?expand=SUMMARY`,
-  //   {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: "Bearer " + accessToken,
-  //     },
-  //   },
-  // );
-  //
-  // if (!response.ok) {
-  //   console.log("Failed to get USPS tracking", response.status, response.statusText, await response.text());
-  //   throw new Error(`Failed to get USPS tracking with status ${response.statusText}.`);
-  // }
-  //
-  // const trackingResponse = (await response.json()) as UspsTrackingInfo;
-  // if (!trackingResponse) {
-  //   console.log("Failed to parse USPS login response");
-  //   throw new Error("Failed to parse USPS track response.  Please file a bug report.");
-  // }
+  const html = dom.serialize();
 
-  const trackingResponse: UspsTrackingInfo = {
-    trackResponse: {
-      shipment: [
-        {
-          inquiryNumber: "",
-          package: [
-            {
-              activity: [{}],
-              currentStatus: { code: "", description: "" },
-              deliveryDate: [{ date: "", type: "" }],
-              trackingNumber: "",
-            },
-          ],
-        },
-      ],
-    },
-  };
+  const $ = cheerio.load(initialHtml);
 
-  return trackingResponse;
-}
+  const expected_delivery = $("div.expected_delivery");
+  const day = expected_delivery.find("strong.date").text();
+  const month_year = expected_delivery.find("span.month_year");
+  const month_name = month_year.find("span").text();
+  const year = month_year.text();
 
-function convertUspsTrackingToPackages(upsTrackingInfo: UspsTrackingInfo): Package[] {
-  return [];
-  // return upsTrackingInfo.trackResponse.shipment
-  //   .flatMap((shipment) => shipment.package)
-  //   .map((aPackage) => {
-  //     const deliveryDate = aPackage.deliveryDate.find((deliveryDate) => deliveryDate.type === "DEL")?.date;
-  //     const rescheduledDeliveryDate = aPackage.deliveryDate.find((deliveryDate) => deliveryDate.type === "RDD")?.date;
-  //     const scheduledDeliveryDate = aPackage.deliveryDate.find((deliveryDate) => deliveryDate.type === "SDD")?.date;
-  //
-  //     return {
-  //       delivered: aPackage.currentStatus.code === "011",
-  //       deliveryDate: convertUpsDateToDate(deliveryDate || rescheduledDeliveryDate || scheduledDeliveryDate),
-  //       activity: [],
-  //     };
-  //   });
+  console.log(day, month_name, year);
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const month = monthNames.indexOf(month_name);
+
+  return { activity: [], delivered: false, deliveryDate: new Date(parseInt(year), month, parseInt(day)) };
 }
 
 export default updateUspsTracking;

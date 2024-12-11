@@ -79,16 +79,20 @@
   ],
   "dependencies": {
     "@raycast/api": "^1.85.2",
-    "@raycast/utils": "^1.17.0"
+    "@raycast/utils": "^1.17.0",
+    "cheerio": "^1.0.0",
+    "jsdom": "^24.0.1"
   },
   "devDependencies": {
     "@raycast/eslint-config": "1.0.11",
+    "@types/cheerio": "^0.22.35",
+    "@types/jsdom": "^21.1.7",
     "@types/node": "20.17.9",
     "@types/react": "18.3.14",
     "eslint": "8.57.1",
+    "node-fetch": "3.3.2",
     "prettier": "3.4.2",
-    "typescript": "5.7.2",
-    "node-fetch": "3.3.2"
+    "typescript": "5.7.2"
   },
   "scripts": {
     "build": "ray build",
