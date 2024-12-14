@@ -86,6 +86,11 @@ export default function TrackDeliveriesCommand() {
                   icon={Icon.MagnifyingGlass}
                   target={<ShowDetailsView delivery={delivery} packages={packages[delivery.id]?.packages ?? []} />}
                 />
+                <Action.CopyToClipboard
+                  title="Copy Tracking Number"
+                  shortcut={Keyboard.Shortcut.Common.Copy}
+                  content={delivery.trackingNumber}
+                />
                 <Action.Push
                   title="Edit Delivery"
                   icon={Icon.Pencil}

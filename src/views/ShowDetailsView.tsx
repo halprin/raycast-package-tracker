@@ -1,4 +1,4 @@
-import { Detail } from "@raycast/api";
+import { Action, ActionPanel, Detail, Keyboard } from "@raycast/api";
 import { Delivery } from "../delivery";
 import { deliveryIcon, deliveryStatus, getPackageWithEarliestDeliveryDate, Package } from "../package";
 import carriers from "../carriers";
@@ -29,6 +29,15 @@ ${packages.map((aPackage, index) => markdownForPackage(aPackage, index)).reduce(
           />
           <Detail.Metadata.Label title="Number of Packages" text={packages.length.toString()} />
         </Detail.Metadata>
+      }
+      actions={
+        <ActionPanel>
+          <Action.CopyToClipboard
+            title="Copy Tracking Number"
+            shortcut={Keyboard.Shortcut.Common.Copy}
+            content={delivery.trackingNumber}
+          />
+        </ActionPanel>
       }
     />
   );
